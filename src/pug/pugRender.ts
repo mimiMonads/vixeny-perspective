@@ -1,4 +1,4 @@
-import { CyclePlugin } from "vixeny/components/http/types";
+import { CyclePlugin, FunRouterOptions } from "vixeny/components/http/types";
 import { compileFile } from "pug";
 import { Petition } from "vixeny/components/http/src/framework/optimizer/types";
 
@@ -56,10 +56,32 @@ const pugRenderer = (needs:plugin) => {
   return {
     name: sym,
     isFunction: true,
-    type: {},
+    type: {} as {path: string, options?: Options},
     // This plugin does not have a specific type requirement
-    f: (_) => () =>
-      compileFile as (path: string, options?: Options) => CompileFunction,
+    f: (o:FunRouterOptions) => (userOptions:Petition) =>{
+
+    //getting name
+    const currentName = Object
+    .keys(o?.cyclePlugin ?? [])
+    //@ts-ignore
+    .find(name => o?.cyclePlugin[name].name === sym) as string;
+
+    const options =  
+        "plugins" in userOptions && userOptions.plugins
+          ? userOptions.plugins[currentName] as {path: string, options?: Options}
+          : null
+
+
+    if (options === null || options === undefined ) throw new Error('Expecting path in: ' + currentName)
+
+    try{
+      const compose = compileFile(options.path,options.options)
+      return  compose as CompileFunction
+    }catch(e){
+      throw new Error("The pluging : " + currentName + ' has panicked in : '+ userOptions.path )
+    } 
+
+    }
   };
 };
 
