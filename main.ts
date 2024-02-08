@@ -1,3 +1,2 @@
-import pug from 'pug'
-import { assertOptions } from 'vixeny';
-
+import pug from "pug";
+import { assertOptions } from "vixeny";
