@@ -160,7 +160,7 @@ const pugRenderer = (needs: plugin) => {
       return {
         name: sym,
         isFunction: true,
-        type: {} as { path: string; options?: Options , source: never} | {},
+        type: {} as { path: string; options?: Options; source: never } | {},
         // This plugin does not have a specific type requirement
         f: (o: FunRouterOptions) => (userOptions: Petition) => {
           //getting name
@@ -197,6 +197,104 @@ const pugRenderer = (needs: plugin) => {
   }
 };
 
+type SourceType = { source: string; options?: Options } | null | undefined;
+type PathType = { path: string; options?: Options } | null | undefined;
+
+const getName = (o: FunRouterOptions) => (sym: symbol) =>
+  Object
+    .keys(o?.cyclePlugin ?? [])
+    //@ts-ignore
+    .find((name) => o?.cyclePlugin[name].name === sym) as string;
+
+const getOptions = (userOptions: Petition) => (currentName: string) =>
+  "plugins" in userOptions && userOptions.plugins
+    ? userOptions.plugins[currentName]
+    : null;
+
+export const composeCompiled = ((sym) => ({
+  name: sym,
+  isFunction: true,
+  type: {} as SourceType,
+  // This plugin does not have a specific type requirement
+  f: (o: FunRouterOptions) => (userOptions: Petition) => {
+    //getting name
+    const currentName = getName(o)(sym);
+
+    const options = getOptions(userOptions)(currentName) as SourceType;
+
+    if (options === null || options === undefined) {
+      throw new Error("Expecting source in: " + currentName);
+    }
+
+    try {
+      const compose = compile(options.source, options.options);
+      return compose as CompileFunction;
+    } catch (e) {
+      throw new Error(
+        "The pluging : " + currentName + " has panicked in : " +
+          userOptions.path,
+      );
+    }
+  },
+}))(Symbol("composeCompiled"));
+
+export const composeCompiledFile = ((sym) => ({
+  name: sym,
+  isFunction: true,
+  type: {} as PathType,
+  // This plugin does not have a specific type requirement
+  f: (o: FunRouterOptions) => (userOptions: Petition) => {
+    //getting name
+    const currentName = getName(o)(sym);
+
+    const options = getOptions(userOptions)(currentName) as PathType;
+
+    if (options === null || options === undefined) {
+      throw new Error("Expecting path in: " + currentName);
+    }
+
+    try {
+      const compose = compileFile(options.path, options.options);
+      return compose as CompileFunction;
+    } catch (e) {
+      throw new Error(
+        "The pluging : " + currentName + " has panicked in : " +
+          userOptions.path,
+      );
+    }
+  },
+})
+)(Symbol("composeCompiledFile"));
+
+export const composecompiledClient = (sym =>({
+  name: sym,
+  isFunction: true,
+  type: {} as SourceType,
+  // This plugin does not have a specific type requirement
+  f: (o: FunRouterOptions) => (userOptions: Petition) => {
+    //getting name
+    const currentName = getName(o)(sym);
+
+    const options = getOptions(userOptions)(currentName) as SourceType;
+
+    if (options === null || options === undefined) {
+      throw new Error("Expecting path in: " + currentName);
+    }
+
+    try {
+      const composed = compileFileClient(
+        options.source,
+        options.options,
+      ) as string;
+      return composed
+    } catch (e) {
+      throw new Error(
+        "The pluging : " + currentName + " has panicked in : " +
+          userOptions.path,
+      );
+    }
+  },
+}) )(Symbol("composecompiledClient"));
 // Self-invoking function to enforce type-checking against the CyclePlugin type.
 ((I: CyclePlugin) => I)(pugRenderer("compile"));
 
