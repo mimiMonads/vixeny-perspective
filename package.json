@@ -22,6 +22,6 @@
   },
   "dependencies": {
     "pug": "^3.0.2",
-    "vixeny": "^0.0.89"
+    "vixeny": "^0.0.91"
   }
 }

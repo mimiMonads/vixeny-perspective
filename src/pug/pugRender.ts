@@ -205,20 +205,18 @@ export const render = {
   name: Symbol.for("render"),
   isFunction: true,
   type: undefined,
-  f: (_) => (_) => pugRender as (source: string, options?: Options) => string,
+  f: (_:FunRouterOptions) => (_:Petition) => pugRender as (source: string, options?: Options) => string,
 };
 
 export const renderFile = {
   name: Symbol.for("render"),
   isFunction: true,
-  type: undefined,
-  f: (_) => (_) => pugRenderFile as (path: string, options?: Options) => string,
+  type: {} ,
+  f: (_?:FunRouterOptions) => (_:Petition) => pugRenderFile as (path: string, options?: Options) => string,
 };
 
 // Self-invoking function to enforce type-checking against the CyclePlugin type.
 ((I: CyclePlugin) => I)(composeCompiled);
 ((I: CyclePlugin) => I)(composeCompiledFile);
-((I: CyclePlugin) => I)(compileClientWithDependenciesTracked);
-((I: CyclePlugin) => I)(compileFileClient);
 ((I: CyclePlugin) => I)(render);
 ((I: CyclePlugin) => I)(renderFile);
