@@ -1,4 +1,11 @@
-import { composeCompiled, composeCompiledFile, composecompiledClient,composeCompiledFileClient, render, renderFile } from "./pugRender";
+import {
+  composeCompiled,
+  composecompiledClient,
+  composeCompiledFile,
+  composeCompiledFileClient,
+  render,
+  renderFile,
+} from "./pugRender";
 
 const pugOptions = {
   cyclePlugin: {
@@ -7,7 +14,7 @@ const pugOptions = {
     compileClient: composecompiledClient,
     compileFileClient: composeCompiledFileClient,
     render: render,
-    renderFile: renderFile
+    renderFile: renderFile,
   },
 };
 

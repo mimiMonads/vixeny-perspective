@@ -1,5 +1,5 @@
 {
-    "imports": {
-      "vixeny": "https://deno.land/x/endofunctor/main.ts"
-    }
+  "imports": {
+    "vixeny": "https://deno.land/x/endofunctor/main.ts"
   }
+}
