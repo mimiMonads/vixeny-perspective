@@ -1,12 +1,13 @@
-import pugRenderer, { composeCompiled, composeCompiledFile, composecompiledClient } from "./pugRender";
+import { composeCompiled, composeCompiledFile, composecompiledClient,composeCompiledFileClient, render, renderFile } from "./pugRender";
 
 const pugOptions = {
   cyclePlugin: {
-    // other plugins,
     compileFile: composeCompiledFile,
     compile: composeCompiled,
     compileClient: composecompiledClient,
-    compileFileClient: pugRenderer("compileFileClient"),
+    compileFileClient: composeCompiledFileClient,
+    render: render,
+    renderFile: renderFile
   },
 };
 

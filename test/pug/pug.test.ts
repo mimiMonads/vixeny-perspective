@@ -29,7 +29,7 @@ const routes = wrap(pugOptions)()
     path: "/compileClient",
     plugins: {
       compileClient: {
-        source: "./src/pug/template.pug",
+        source:  `p #{name}'s Pug source code!`,
       },
     },
     f: (c) => c.compileClient,
@@ -41,8 +41,18 @@ const routes = wrap(pugOptions)()
         path: "./src/pug/template.pug",
       },
     },
-    f: (c) =>  c.compileFileClient(),
-  });
+    f: (c) =>  c.compileFileClient,
+  })
+  .stdPetition({
+    path: '/render',
+    f: c => c.render(`p #{name}'s Pug source code!`)
+  })
+  .stdPetition({
+    path: '/renderFile',
+    f: c => c.renderFile("./src/pug/template.pug")
+  })
+
+  
 const test = routes.testRequests();
 
 describe("compile", () => {
@@ -53,6 +63,16 @@ describe("compile", () => {
       ).then((res) => res.text()),
     )
       .toBe("<p>helloworld's Pug source code!</p>"));
+});
+
+describe("render", () => {
+  it("validPath", async () =>
+    expect(
+      await test(
+        new Request("http://localhost:8080/render"),
+      ).then((res) => res.text()),
+    )
+      .toBe("<p>'s Pug source code!</p>"));
 });
 
 describe("compileFile", () => {
@@ -73,11 +93,22 @@ describe("compileFile", () => {
             path: "./src/pug/template.pug",
           },
         },
-        f: (c) => c.compileFile({ name: "helloworld" }),
+        f: (c) => c.compileFile({ name: "helloworld" }) ,
       }).testRequests(),
     )
       .toThrow());
 });
+
+describe("renderFile", () => {
+  it("validPath", async () =>
+    expect(
+      await test(
+        new Request("http://localhost:8080/renderFile"),
+      ).then((res) => res.text()),
+    )
+      .toBe("<p>'s Pug source code!</p>"));
+});
+
 
 describe("compileFileClient", () => {
   it("validPath", async () =>

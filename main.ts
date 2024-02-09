@@ -1,2 +1,10 @@
-import pug from "pug";
-import { assertOptions } from "vixeny";
+import { composeCompiled, composeCompiledFile, composeCompiledFileClient, composecompiledClient, render, renderFile } from "./src/pug/pugRender";
+
+export const pug = {
+    compileFile: composeCompiledFile,
+    compile: composeCompiled,
+    compileClient: composecompiledClient,
+    compileFileClient: composeCompiledFileClient,
+    render: render,
+    renderFile: renderFile
+  }
