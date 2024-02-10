@@ -13,12 +13,13 @@ export const pugStaticServerPlugin = (option?: StaticServer) => ({
     relativeName: string;
   }) =>
     ((def) => (file) => ({
-      type: "response" as const,
+      type: "response" ,
       path: option && option.preserveExtension
         ? ob.relativeName.slice(0, -4)
         : ob.relativeName,
       r: () => new Response(file(def)),
-    }))(
+    } as const 
+    ))(
       option && option.default ? option.default : null,
     )(
       compileFile(ob.path),
