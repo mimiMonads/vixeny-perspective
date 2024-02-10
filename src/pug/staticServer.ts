@@ -19,7 +19,7 @@ export const pugStaticServerPlugin = (option?: StaticServer) => ({
         : ob.relativeName,
       r: () => new Response(file(def), {
         headers: new Headers([
-          [".html", "text/html"]
+          ["content-type", "text/html"]
         ])
       }),
     } as const 
