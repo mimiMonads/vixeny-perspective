@@ -6,6 +6,9 @@ import {
   render,
   renderFile,
 } from "./src/pug/pugRender";
+import {
+  pugStaticServerPlugin
+} from './src/pug/staticServer'
 
 export const pug = {
   compileFile: composeCompiledFile,
@@ -15,3 +18,7 @@ export const pug = {
   render: render,
   renderFile: renderFile,
 };
+
+export const staticServerPlugings = {
+  pug: pugStaticServerPlugin
+}
