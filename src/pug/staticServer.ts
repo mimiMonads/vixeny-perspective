@@ -17,7 +17,11 @@ export const pugStaticServerPlugin = (option?: StaticServer) => ({
       path: option && option.preserveExtension
         ? ob.relativeName.slice(0, -4)
         : ob.relativeName,
-      r: () => new Response(file(def)),
+      r: () => new Response(file(def), {
+        headers: new Headers([
+          [".html", "text/html"]
+        ])
+      }),
     } as const 
     ))(
       option && option.default ? option.default : null,
