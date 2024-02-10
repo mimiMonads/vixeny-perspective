@@ -39,7 +39,7 @@ p #{name}'s Pug source code!
 
 ```typescript
 import { vixeny, wrap } from "vixeny";
-import { pug } from "vixeny-prespective"; // Importing the plugin options
+import { pug, staticServerPlugings } from "vixeny-prespective"; // Importing the plugin options
 
 // Modify your helpers.ts to include pugOptions
 const pugOptions = {
@@ -113,7 +113,17 @@ const routes = wrap(pugOptions)()
 
 // Example of setting up a Vixeny app with Pug template rendering in Bun in http://localhost:3000/
 Bun.serve({
-  fetch: vixeny(pugOptions)(routes.unwrap()),
+  fetch: vixeny(pugOptions)([
+    ...routes.unwrap(),
+    //with static server
+    {
+      type: "fileServer",
+      name: "/",
+      path: "./public/",
+      //it has options
+      template: staticServerPlugings.pug(),
+    },
+  ]),
 });
 ```
 

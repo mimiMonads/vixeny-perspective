@@ -5,14 +5,12 @@ import {
   compileClientWithDependenciesTracked,
   compileFile,
   compileFileClient,
+  compileTemplate,
+  Options as PugOptions,
   render as pugRender,
   renderFile as pugRenderFile,
-  compileTemplate,
-  Options as PugOptions
 } from "pug";
 import { Petition } from "vixeny/components/http/src/framework/optimizer/types";
-
-
 
 // Returns a string representing a function for client-side use
 
@@ -190,14 +188,14 @@ export const render = {
   name: Symbol.for("render"),
   isFunction: true,
   type: undefined,
-  f: (_:FunRouterOptions) => (_:Petition) => pugRender 
+  f: (_: FunRouterOptions) => (_: Petition) => pugRender,
 };
 
 export const renderFile = {
   name: Symbol.for("render"),
   isFunction: true,
-  type: {} ,
-  f: (_?:FunRouterOptions) => (_:Petition) => pugRenderFile 
+  type: {},
+  f: (_?: FunRouterOptions) => (_: Petition) => pugRenderFile,
 };
 
 // Self-invoking function to enforce type-checking against the CyclePlugin type.
