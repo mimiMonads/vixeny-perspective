@@ -14,7 +14,7 @@ export const pugStaticServerPlugin = (option?: StaticServer) => ({
   }) =>
     ((def) => (file) => ({
       type: "response" ,
-      path: option && option.preserveExtension
+      path: option &&  'preserveExtension' in option && !option.preserveExtension
         ? ob.relativeName.slice(0, -4)
         : ob.relativeName,
       r: () => new Response(file(def), {
