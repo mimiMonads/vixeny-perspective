@@ -6,7 +6,7 @@ import {
   render,
   renderFile,
 } from "./src/pug/pugRender";
-import { pugStaticServerPlugin } from "./src/pug/staticServer";
+import { pugStaticServerPlugin } from "./src/pug/staticServer.ts";
 
 export const pug = {
   compileFile: composeCompiledFile,
