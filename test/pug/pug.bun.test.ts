@@ -1,6 +1,6 @@
 import { wrap } from "vixeny";
 import { describe, expect, it } from "@jest/globals";
-import pugOptions from "../../src/pug/optionsPug";
+import pugOptions from "./optionsPug";
 
 const normalize = (s: string) =>
   s.replace(/(?<!`|\$\{.*)(["'])(?:(?=(\\?))\2.)*?\1/g, " ")

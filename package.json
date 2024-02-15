@@ -1,6 +1,6 @@
 {
   "name": "vixeny-prespective",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Engine views for Vixeny",
   "main": "main.ts",
   "scripts": {
@@ -18,12 +18,12 @@
   "homepage": "https://github.com/mimiMonads/vixeny-prespective#readme",
   "devDependencies": {
     "@jest/globals": "^29.7.0",
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "pug": "^3.0.2"
   },
   "dependencies": {
     "@types/ejs": "^3.1.5",
     "@types/pug": "^2.0.10",
-    "pug": "^3.0.2",
     "vixeny": "^0.0.916"
   }
 }

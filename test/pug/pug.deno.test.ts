@@ -1,7 +1,7 @@
-
 import { wrap } from "vixeny";
-import pugOptions from "../../src/pug/optionsPug.ts";
-import { assertEquals  } from "https://deno.land/std/testing/asserts.ts";
+import pugOptions from "./optionsPug.ts";
+import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
+
 const normalize = (s: string) =>
   s.replace(/(?<!`|\$\{.*)(["'])(?:(?=(\\?))\2.)*?\1/g, " ")
     .replace(/\s+/g, " ")
@@ -55,7 +55,6 @@ const routes = wrap(pugOptions)()
 
 const test = routes.testRequests();
 
-
 Deno.test("compile: validPath", async () => {
   const response = await test(new Request("http://localhost:8080/compile"));
   const text = await response.text();
@@ -74,7 +73,6 @@ Deno.test("compileFile: validPath", async () => {
   assertEquals(text, "<p>helloworld's Pug source code!</p>");
 });
 
-
 Deno.test("renderFile: validPath", async () => {
   const response = await test(new Request("http://localhost:8080/renderFile"));
   const text = await response.text();
@@ -82,7 +80,9 @@ Deno.test("renderFile: validPath", async () => {
 });
 
 Deno.test("compileFileClient: validPath", async () => {
-  const response = await test(new Request("http://localhost:8080/compileFileClient"));
+  const response = await test(
+    new Request("http://localhost:8080/compileFileClient"),
+  );
   const text = await response.text().then((text) => normalize(text));
   const expected = normalize(
     `function pug_escape(e){var a=""+e,t=pug_match_html.exec(a);if(!t)return e;var r,c,n,s="";for(r=t.index,c=0;r<a.length;r++){switch(a.charCodeAt(r)){case 34:n="&quot;";break;case 38:n="&amp;";break;case 60:n="&lt;";break;case 62:n="&gt;";break;default:continue}c!==r&&(s+=a.substring(c,r)),c=r+1,s+=n}return c!==r?s+a.substring(c,r):s}
@@ -100,7 +100,7 @@ Deno.test("compileFileClient: validPath", async () => {
       }.call(this, "name" in locals_for_with ?
           locals_for_with.name :
           typeof name !== 'undefined' ? name : undefined));
-      ;} catch (err) {pug_rethrow(err, pug_debug_filename, pug_debug_line);};return pug_html;}`
+      ;} catch (err) {pug_rethrow(err, pug_debug_filename, pug_debug_line);};return pug_html;}`,
   );
   assertEquals(text, expected);
 });
