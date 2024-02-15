@@ -7,7 +7,12 @@ import {
   render,
   renderFile,
 } from "./src/pug/pugRender.ts";
+import {
+  ejsComposeCompiled
+} from "./src/ejs/ejsRender.ts"
+
 import { pugStaticServerPlugin } from "./src/pug/staticServer.ts";
+import * as ejsModule from "ejs";
 import * as pugModule from "pug";
 
 export const pug = (pug: typeof pugModule) => ({
@@ -22,6 +27,10 @@ export const pug = (pug: typeof pugModule) => ({
     ),
   renderFile: renderFile(pug.renderFile),
 });
+
+export const ejs = (ejs: typeof ejsModule ) => ({
+  compile: ejsComposeCompiled(ejs.compile)
+})
 
 export const staticServerPlugings = ({
   pug: pugStaticServerPlugin,

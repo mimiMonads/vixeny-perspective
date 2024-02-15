@@ -19,7 +19,8 @@
   "devDependencies": {
     "@jest/globals": "^29.7.0",
     "jest": "^29.7.0",
-    "pug": "^3.0.2"
+    "pug": "^3.0.2",
+    "ejs": "^3.1.9"
   },
   "dependencies": {
     "@types/ejs": "^3.1.5",
