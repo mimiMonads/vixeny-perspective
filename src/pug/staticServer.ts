@@ -13,7 +13,7 @@ export const pugStaticServerPlugin =
       path: string;
       relativeName: string;
     }) =>
-      ((def:pugModule.LocalsObject) => (file: pugModule.compileTemplate) => ({
+      ((def: pugModule.LocalsObject) => (file: pugModule.compileTemplate) => ({
         type: "response",
         path:
           option && "preserveExtension" in option && !option.preserveExtension
