@@ -5,7 +5,7 @@ import {
   composeCompiledFileClient,
   render,
   renderFile,
-} from "./pugRender";
+} from "./pugRender.ts";
 
 const pugOptions = {
   cyclePlugin: {
