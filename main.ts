@@ -23,6 +23,6 @@ export const pug = (pug: typeof pugModule) => ({
   renderFile: renderFile(pug.renderFile),
 });
 
-export const staticServerPlugings = (pug: typeof pugModule) => ({
-  pug: pugStaticServerPlugin(pug.compileFile),
+export const staticServerPlugings = ({
+  pug: pugStaticServerPlugin,
 });
