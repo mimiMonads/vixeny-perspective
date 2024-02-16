@@ -15,7 +15,10 @@ import {
 
 import { pugStaticServerPlugin } from "./src/pug/staticServer.ts";
 import { ejsStaticServerPlugin } from "./src/ejs/staticServer.ts";
+
+// @deno-types="npm:@types/ejs@^3.1.5"
 import * as ejsModule from "ejs";
+// @deno-types="npm:@types/pug@^2.0.10"
 import * as pugModule from "pug";
 
 export const pug = (pug: typeof pugModule) => ({
