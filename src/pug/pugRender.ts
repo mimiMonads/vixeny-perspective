@@ -1,6 +1,5 @@
-import { Petitions } from "vixeny/types";
-import { FunRouterOptions } from "vixeny/components/http/types";
-import { Petition } from "vixeny/components/http/src/framework/optimizer/types";
+import { Petitions , FunRouterOptions , Petition} from "vixeny/types";
+
 import * as pugModule from "pug";
 
 type PugOptions = pugModule.Options;
