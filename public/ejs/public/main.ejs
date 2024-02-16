@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #2C2A4A; /* Dark purple background */
+            color: #C7C5F4; /* Light purple text */
+        }
+        header, footer {
+            background-color: #1E1C36; /* Darker purple */
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+        main {
+            padding: 20px;
+            text-align: center;
+        }
+        .centered-img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 50%; /* Adjust as needed */
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+    <main>
+        <h1>Welcome to Our Website</h1>
+        <p>This is the main page. xd free to explore.</p>
+        <img src="/path/to/your/image.jpg" alt="Centered Image" class="centered-img">
+    </main>
+    <%- include('../partials/footer') %>
+</body>
+</html>
