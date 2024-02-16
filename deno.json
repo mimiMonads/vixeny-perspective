@@ -1,6 +1,8 @@
 {
   "imports": {
     "vixeny": "https://deno.land/x/endofunctor/main.ts",
+    "vixeny/components/http/src/framework/optimizer/types": "vixeny/components/http/src/framework/optimizer/types.ts",
+    "vixeny/components/http/types": "vixeny/components/http/types.ts",
     "ejs": "https://deno.land/x/dejs/mod.ts",
     "pug": "https://deno.land/x/pug/mod.ts"
   }
