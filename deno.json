@@ -5,7 +5,7 @@
     "vixeny/components/http/types": "vixeny/components/http/types.ts",
     "ejs": "npm:ejs",
     "pug": "npm:pug",
-    "remark": "npm:unified",
+    "unified": "npm:unified",
     "rehype-document": "https://esm.sh/rehype-document",
     "rehype-format": "https://esm.sh/rehype-format",
     "rehype-stringify": "https://esm.sh/rehype-stringify",
