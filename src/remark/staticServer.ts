@@ -20,7 +20,7 @@ type StaticServer = {
           type: "response",
           path:
             option && "preserveExtension" in option && !option.preserveExtension
-              ? ob.relativeName.slice(0, -2)
+              ? ob.relativeName.slice(0, -3)
               : ob.relativeName,
           r: async () =>
              new Response( String(await pro.process(readFileSync(ob.path, "utf8"))), {
