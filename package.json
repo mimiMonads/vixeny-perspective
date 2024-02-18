@@ -1,6 +1,6 @@
 {
   "name": "vixeny-prespective",
-  "version": "0.0.98",
+  "version": "0.0.981",
   "description": "Engine views for Vixeny",
   "main": "main.ts",
   "scripts": {

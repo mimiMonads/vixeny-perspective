@@ -41,8 +41,6 @@ export const ejs = (ejs: typeof ejsModule) => ({
   renderFile: ejsComposeRenderFile(ejs.renderFile),
 });
 
-export const staticServerPlugings = {
-  pug: pugStaticServerPlugin,
-  ejs: ejsStaticServerPlugin,
-  remark: remarkStaticServer
-};
+export { pugStaticServerPlugin , ejsStaticServerPlugin , remarkStaticServer}
+
+
