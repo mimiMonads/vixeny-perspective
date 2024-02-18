@@ -1,4 +1,4 @@
-import { Petitions , FunRouterOptions , Petition} from "vixeny/types";
+import { FunRouterOptions , Petition} from "vixeny/types";
 
 import * as pugModule from "pug";
 

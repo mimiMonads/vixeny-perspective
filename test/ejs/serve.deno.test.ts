@@ -12,7 +12,7 @@ const serve = vixeny()([
     type: "fileServer",
     name: "/",
     path: "./public/ejs/public/",
-    template: ejsStaticServerPlugin(ejsModule.renderFile)(),
+    template: [ejsStaticServerPlugin(ejsModule.renderFile)()],
   },
 ]);
 

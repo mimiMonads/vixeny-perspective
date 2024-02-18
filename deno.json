@@ -1,9 +1,15 @@
 {
   "imports": {
-    "vixeny": "https://deno.land/x/endofunctor/main.ts",
+    "vixeny": "https://deno.land/x/endofunctor@v0.0.922/main.ts",
     "vixeny/components/http/src/framework/optimizer/types": "vixeny/components/http/src/framework/optimizer/types.ts",
     "vixeny/components/http/types": "vixeny/components/http/types.ts",
-    "ejs": "https://deno.land/x/dejs/mod.ts",
-    "pug": "https://deno.land/x/pug/mod.ts"
+    "ejs": "npm:ejs",
+    "pug": "npm:pug",
+    "remark": "npm:unified",
+    "rehype-document": "https://esm.sh/rehype-document",
+    "rehype-format": "https://esm.sh/rehype-format",
+    "rehype-stringify": "https://esm.sh/rehype-stringify",
+    "remark-parse": "https://esm.sh/remark-parse",
+    "remark-rehype": "https://esm.sh/remark-rehype"
   }
 }

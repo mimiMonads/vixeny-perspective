@@ -8,7 +8,7 @@ const serve = vixeny()([
     type: "fileServer",
     name: "/",
     path: "./public/",
-    template: pugStaticServerPlugin(pugModule.compileFile)(),
+    template: [pugStaticServerPlugin(pugModule.compileFile)()],
   },
 ]);
 
