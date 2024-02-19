@@ -1,0 +1,18 @@
+/* Input CSS (styles.css) */
+:root {
+    --main-color: #123456;
+  }
+  
+  .body {
+    font-family: 'Arial', sans-serif;
+    color: var(--main-color);
+    
+    .header {
+      background: var(--main-color);
+      &__title {
+        margin: 0;
+        color: #ffffff;
+      }
+    }
+  }
+  
