@@ -12,20 +12,20 @@ export const ejsStaticServerPlugin =
       root: string;
       path: string;
       relativeName: string;
-    }) =>  ({
+    }) => ({
       type: "response",
       path: option && "preserveExtension" in option && !option.preserveExtension
         ? ob.relativeName.slice(0, -4)
         : ob.relativeName,
       r: async () =>
-        new Response( 
-         await renderFile(
-            ob.path, 
+        new Response(
+          await renderFile(
+            ob.path,
             option && option.default ? option.default : {},
-             {
-              root: ob.path.slice(0,ob.path.lastIndexOf('/'))
-            }
-         ),
+            {
+              root: ob.path.slice(0, ob.path.lastIndexOf("/")),
+            },
+          ),
           {
             headers: new Headers([
               ["content-type", "text/html"],
@@ -34,4 +34,3 @@ export const ejsStaticServerPlugin =
         ),
     } as const),
   });
-

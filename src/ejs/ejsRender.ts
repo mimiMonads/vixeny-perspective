@@ -59,6 +59,6 @@ export const ejsComposeRenderFile = (renderFile: typeof ejsModule.renderFile) =>
   ((sym) => ({
     name: sym,
     isFunction: true,
-    type: {}  as never,
+    type: {} as never,
     f: (_: FunRouterOptions) => (_: Petition) => renderFile,
   }))(Symbol("ejsRenderFile"));
