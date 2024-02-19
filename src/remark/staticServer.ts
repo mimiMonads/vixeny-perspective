@@ -22,12 +22,16 @@ type StaticServer = {
             option && "preserveExtension" in option && !option.preserveExtension
               ? ob.relativeName.slice(0, -3)
               : ob.relativeName,
-          r: async () =>
-             new Response( String(await pro.process(readFileSync(ob.path, "utf8"))), {
+          r: ( v => async() =>
+             new Response( v === '' 
+              ? v = String(await pro.process(readFileSync(ob.path, "utf8")))
+              : v
+              , {
               headers: new Headers([
                 ["content-type", "text/html"],
               ]),
-            }),
+            }))('')
+            ,
         } as const)
     })
   )(
