@@ -10,6 +10,10 @@
     "rehype-format": "https://esm.sh/rehype-format",
     "rehype-stringify": "https://esm.sh/rehype-stringify",
     "remark-parse": "https://esm.sh/remark-parse",
-    "remark-rehype": "https://esm.sh/remark-rehype"
+    "remark-rehype": "https://esm.sh/remark-rehype",
+    "postcss": "npm:postcss",
+    "postcss-nested": "npm:postcss-nested",
+    "autoprefixer": "npm:autoprefixer",
+    "sass": "npm:sass"
   }
 }
