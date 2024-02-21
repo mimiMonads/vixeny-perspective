@@ -39,7 +39,7 @@ export const typescriptStaticServer =
               : v,
             {
               headers: new Headers([
-                ["content-type", "text/css"],
+                ["content-type", "application/javascript"],
               ]),
             },
           ))(""),
