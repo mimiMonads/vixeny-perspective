@@ -1,29 +1,50 @@
 import esbuild, { TransformOptions  } from 'esbuild';
 
-type options = TransformOptions
+type options = Omit<TransformOptions, 'entryPoints'>
 
 
-async function bundleTypeScript() {
-  try {
-    const result = await esbuild.build({
-      entryPoints: ['src/main.ts'], // Entry point of your TypeScript code
-      bundle: true, // Enable bundling
-      write: false, // Prevent writing to disk
-      platform: 'browser', // or 'browser', depending on your target
-      format: 'esm', // Output format (e.g., 'cjs' for CommonJS, 'esm' for ES Modules)
-      outdir: 'out', // Specify an output directory (required even if write: false)
-      metafile: true, // Enable metadata generation to capture output details
-    });
+type StaticServer = {
 
-    // The bundled code is in result.outputFiles[0].text
-    const bundledCode = result.outputFiles[0].text;
+};
 
-    console.log('Bundled code:', bundledCode);
+export const typescriptStaticServer =
+(build:  typeof esbuild) => (esOptions?: StaticServer) =>
+  (
+   ({
+      checker: (path: string) => path.includes(".ts"),
+      r: (ob: {
+        root: string;
+        path: string;
+        relativeName: string;
+      }) => ({
+        type: "response",
+        path: ob.relativeName.slice(0, -3) + '.mjs',
+        r: ((v) => async () =>
+          new Response(
+            v === ""
+              ? 
+                v = (await build.build(
+                  {...{
+                  entryPoints: [ob.path], // Entry point of your TypeScript code
+                  bundle: true, // Enable bundling
+                  write: false, // Prevent writing to disk
+                  platform: 'browser', // or 'browser', depending on your target
+                  format: 'esm', // Output format (e.g., 'cjs' for CommonJS, 'esm' for ES Modules)
+                  outdir: 'out', // Specify an output directory (required even if write: false)
+                  metafile: true, // Enable metadata generation to capture output details
+                }
+                ,
+              }
+                )).outputFiles[0].text
+              : v,
+            {
+              headers: new Headers([
+                ["content-type", "text/css"],
+              ]),
+            },
+          ))(""),
+      } as const),
+    })
+  )
 
-    // You can now manipulate bundledCode as needed
-    return bundledCode;
-  } catch (error) {
-    console.error('Bundling error:', error);
-    return null;
-  }
-}
+
