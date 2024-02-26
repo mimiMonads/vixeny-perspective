@@ -10,7 +10,7 @@ const serve = vixeny()([
     name: "/",
     path: "./public/typescript",
     template: [
-        typescriptStaticServer(esm)(),
+      typescriptStaticServer(esm)(),
     ],
   },
 ]);
@@ -23,5 +23,10 @@ Deno.test("compile", async () => {
   const response = await serve(new Request("http://localhost:8080/hello.mjs"));
 
   const text = normalize(await response.text());
-  assertEquals(text,normalize('// test/typescript/hello.ts var test = () => console.log( ); // public/typescript/hello.ts test(); '));
+  assertEquals(
+    text,
+    normalize(
+      "// test/typescript/hello.ts var test = () => console.log( ); // public/typescript/hello.ts test(); ",
+    ),
+  );
 });

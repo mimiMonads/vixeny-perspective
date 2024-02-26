@@ -15,6 +15,7 @@
     "postcss-nested": "npm:postcss-nested",
     "autoprefixer": "npm:autoprefixer",
     "sass": "npm:sass",
-    "esbuild": "npm:esbuild"
+    "esbuild": "npm:esbuild",
+    "react": "npm:react"
   }
 }

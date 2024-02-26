@@ -1,2 +1,2 @@
-import { test } from "../../test/typescript/hello.ts"
-test()
+import { test } from "../../test/typescript/hello.ts";
+test();

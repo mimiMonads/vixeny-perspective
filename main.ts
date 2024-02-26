@@ -19,6 +19,7 @@ import { remarkStaticServer } from "./src/remark/staticServer.ts";
 import { sassStaticServer } from "./src/sass/staticServer.ts";
 import { postcssStaticServer } from "./src/postcss/staticServer.ts";
 import { typescriptStaticServer } from "./src/typescript/staticServe.ts";
+import { tsxStaticServer } from "./src/tsx/staticServe.ts";
 // @deno-types="npm:@types/ejs@^3.1.5"
 import * as ejsModule from "ejs";
 // @deno-types="npm:@types/pug@^2.0.10"
@@ -43,4 +44,12 @@ export const ejs = (ejs: typeof ejsModule) => ({
   renderFile: ejsComposeRenderFile(ejs.renderFile),
 });
 
-export { ejsStaticServerPlugin, pugStaticServerPlugin, remarkStaticServer , postcssStaticServer ,sassStaticServer ,typescriptStaticServer};
+export {
+  ejsStaticServerPlugin,
+  postcssStaticServer,
+  pugStaticServerPlugin,
+  remarkStaticServer,
+  sassStaticServer,
+  tsxStaticServer,
+  typescriptStaticServer,
+};

@@ -9,8 +9,7 @@ const serve = vixeny()([
     name: "/",
     path: "./public/sass",
     template: [
-        sassStaticServer(sass)(
-      ),
+      sassStaticServer(sass)(),
     ],
   },
 ]);
@@ -22,5 +21,8 @@ const normalize = (s: string) =>
 Deno.test("compile", async () => {
   const response = await serve(new Request("http://localhost:8080/style.css"));
   const text = normalize(await response.text());
-  assertEquals(text,normalize('h1 { font-size: 40px; } h1 code { font-face: Roboto Mono; }'));
+  assertEquals(
+    text,
+    normalize("h1 { font-size: 40px; } h1 code { font-face: Roboto Mono; }"),
+  );
 });

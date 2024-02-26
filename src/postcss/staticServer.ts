@@ -1,16 +1,14 @@
-import postcss from 'postcss'
-import fs from 'node:fs'
+import postcss from "postcss";
+import fs from "node:fs";
 
-type uses = postcss.AcceptedPlugin[]
-
+type uses = postcss.AcceptedPlugin[];
 
 type StaticServer = {
   uses?: uses;
 };
 
-
-  export const postcssStaticServer =
-  (post : typeof postcss) => (option?: StaticServer) =>
+export const postcssStaticServer =
+  (post: typeof postcss) => (option?: StaticServer) =>
     (
       (pro) => ({
         checker: (path: string) => path.includes(".css"),
@@ -24,11 +22,9 @@ type StaticServer = {
           r: ((v) => async () =>
             new Response(
               v === ""
-                ? 
-                  v = await pro
-                    .process(fs.readFileSync(ob.path, "utf8") , { from: ob.path, })
-                    .then(result => result.css)
-            
+                ? v = await pro
+                  .process(fs.readFileSync(ob.path, "utf8"), { from: ob.path })
+                  .then((result) => result.css)
                 : v,
               {
                 headers: new Headers([
@@ -39,5 +35,5 @@ type StaticServer = {
         } as const),
       })
     )(
-      post(option?.uses ?? [])
+      post(option?.uses ?? []),
     );
