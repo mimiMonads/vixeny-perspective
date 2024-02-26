@@ -16,6 +16,7 @@
     "autoprefixer": "npm:autoprefixer",
     "sass": "npm:sass",
     "esbuild": "npm:esbuild",
-    "react": "npm:react"
+    "react": "https://esm.run/react",
+    "react-dom/server": "https://esm.run/react-dom/server"
   }
 }
