@@ -4,7 +4,7 @@ import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { jsxStaticServer } from "../../src/jsx/staticServe.ts";
 
 import * as Dom from "react-dom/server";
-import * as React from "https://esm.run/react";
+import * as React from "react";
 
 const serve = vixeny()([
   {

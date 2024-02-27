@@ -17,6 +17,7 @@
     "sass": "npm:sass",
     "esbuild": "npm:esbuild",
     "react": "https://esm.run/react",
-    "react-dom/server": "https://esm.run/react-dom/server"
+    "react-dom/server": "https://esm.run/react-dom/server",
+    "cwd": "https://deno.land/std@0.110.0/node/process.ts"
   }
 }

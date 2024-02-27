@@ -1,7 +1,8 @@
 import { TransformOptions } from "esbuild";
 import path from "node:path";
 import * as Dom from "react-dom/server";
-import * as React from "https://esm.run/react";
+import * as React from "react";
+const __dirname = import.meta.dirname;
 
 type options = Omit<TransformOptions, "entryPoints">;
 
@@ -30,9 +31,10 @@ export const jsxStaticServer =
             : new Response(
               v = DomModule.renderToString(
                 ReactModule.createElement(
-                  (await import(path.join(
-                    //@ts-ignore
-                    typeof Deno !== "undefined" ? Deno.cwd() : process.cwd(),
+                  (await import(
+                    path.join(
+                      __dirname as string,
+                    ...ob.path.slice(ob.path.indexOf("/"), ob.path.lastIndexOf("/")).split('/').filter( x => x !== '').map( _ => ".."),
                     ob.path,
                   ))).default,
                 ),
