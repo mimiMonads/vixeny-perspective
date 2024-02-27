@@ -1,18 +1,20 @@
 import { TransformOptions } from "esbuild";
 import path from "node:path";
 import * as Dom from "react-dom/server";
-import * as React from "https://esm.run/react";
+import * as React from "react";
 
 type options = Omit<TransformOptions, "entryPoints">;
 
-type StaticServer = {};
+type StaticServer = {
+  root: string;
+};
 
 export const jsxStaticServer =
   (DomModule: typeof Dom) =>
   (ReactModule: typeof React) =>
-  (esOptions?: StaticServer) => (
+  (opt: StaticServer) => (
     {
-      checker: (path: string) => path.endsWith(".tsx") || path.endsWith(".jsx"),
+      checker: (path: string) => path.endsWith(".jsx"),
       r: (ob: {
         root: string;
         path: string;
@@ -32,7 +34,7 @@ export const jsxStaticServer =
                 ReactModule.createElement(
                   (await import(path.join(
                     //@ts-ignore
-                    typeof Deno !== "undefined" ? Deno.cwd() : process.cwd(),
+                    opt.root,
                     ob.path,
                   ))).default,
                 ),

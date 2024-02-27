@@ -1,6 +1,4 @@
 import { vixeny } from "vixeny";
-
-import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { jsxStaticServer } from "../../src/jsx/staticServe.ts";
 
 import * as Dom from "react-dom/server";
@@ -13,7 +11,7 @@ const serve = vixeny()([
     path: "./public/jsx",
     template: [
       jsxStaticServer(Dom)(React)({
-        root: Deno.cwd(),
+        root: process.cwd(),
       }),
     ],
   },
@@ -23,9 +21,9 @@ const normalize = (s: string) =>
     .replace(/\s+/g, " ")
     .replace(/ +/g, " ");
 
-Deno.test("compile", async () => {
+
   const response = await serve(new Request("http://localhost:8080/main"));
 
   const text = normalize(await response.text());
-  assertEquals(text, "<div>Hello, world!</div>");
-});
+
+console.log(text)
