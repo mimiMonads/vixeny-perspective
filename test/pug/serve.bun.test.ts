@@ -12,6 +12,17 @@ const serve = vixeny()([
   },
 ]);
 
+const serve2 = vixeny()([
+  {
+    type: "fileServer",
+    name: "/",
+    path: "./public/",
+    template: [pugStaticServerPlugin(pugModule.compileFile)({
+      petition: () => ({name: 'Dave'})
+    })],
+  },
+]);
+
 describe("compile", async () => {
   it("validPath", async () =>
     expect(
@@ -21,4 +32,15 @@ describe("compile", async () => {
         .then((res) => res.text()),
     )
       .toBe("<p>'s Pug source code!</p>"));
+});
+
+describe("compile", async () => {
+  it("validPathWithPetition", async () =>
+    expect(
+      await Promise.resolve(serve2(
+        new Request("http://localhost:8000/main.pug"),
+      ))
+        .then((res) => res.text()),
+    )
+      .toBe("<p>Dave's Pug source code!</p>"));
 });
