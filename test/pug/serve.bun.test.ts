@@ -2,6 +2,7 @@ import { vixeny } from "vixeny";
 import { describe, expect, it } from "@jest/globals";
 import { pugStaticServerPlugin } from "../../src/pug/staticServer.ts";
 import * as pugModule from "pug";
+import { plugins } from "vixeny";
 
 const serve = vixeny()([
   {
@@ -17,9 +18,14 @@ const serve2 = vixeny()([
     type: "fileServer",
     name: "/",
     path: "./public/",
-    template: [pugStaticServerPlugin(pugModule.compileFile)({
-      petition: () => ({name: 'Dave'})
-    })],
+    template: [
+      pugStaticServerPlugin(pugModule.compileFile)({
+        petition: plugins.ObjectNull()({
+          type: "object",
+          f: () => ({ name: "Dave" }),
+        }),
+      }),
+    ],
   },
 ]);
 

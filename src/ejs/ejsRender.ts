@@ -1,6 +1,5 @@
 import * as ejsModule from "ejs";
-import { Petition } from "vixeny/components/http/src/framework/optimizer/types";
-import { FunRouterOptions } from "vixeny/components/http/types";
+import { FunRouterOptions, Petition } from "vixeny/types";
 
 const getName = (o: FunRouterOptions) => (sym: symbol) =>
   Object
