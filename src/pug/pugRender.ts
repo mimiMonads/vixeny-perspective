@@ -1,4 +1,10 @@
-import { FunRouterOptions, Petition } from "vixeny/types";
+import { plugins } from "vixeny";
+
+const {
+  getName,
+  getOptions,
+  type
+} = plugins;
 
 import * as pugModule from "pug";
 
@@ -6,26 +12,17 @@ type PugOptions = pugModule.Options;
 type SourceType = { source: string; options?: PugOptions } | null | undefined;
 type PathType = { path: string; options?: PugOptions } | null | undefined;
 
-const getName = (o: FunRouterOptions) => (sym: symbol) =>
-  Object
-    .keys(o?.cyclePlugin ?? [])
-    //@ts-ignore
-    .find((name) => o?.cyclePlugin[name].name === sym) as string;
 
-const getOptions = (userOptions: Petition) => (currentName: string) =>
-  "plugins" in userOptions && userOptions.plugins
-    ? userOptions.plugins[currentName]
-    : null;
 
 export const composeCompiled = (compile: typeof pugModule.compileFile) =>
-  ((sym) => ({
+  ((sym) => type({
     name: sym,
     isFunction: true,
     type: {} as SourceType,
     // This plugin does not have a specific type requirement
-    f: (o: FunRouterOptions) => (userOptions: Petition) => {
+    f: (o) => (userOptions) => {
       //getting name
-      const currentName = getName(o)(sym);
+      const currentName = getName(o ?? {})(sym);
 
       const options = getOptions(userOptions)(currentName) as SourceType;
 
@@ -47,14 +44,14 @@ export const composeCompiled = (compile: typeof pugModule.compileFile) =>
 export const composeCompiledFile = (
   compileFile: typeof pugModule.compileFile,
 ) =>
-  ((sym) => ({
+  ((sym) => type({
     name: sym,
     isFunction: true,
     type: {} as PathType,
     // This plugin does not have a specific type requirement
-    f: (o: FunRouterOptions) => (userOptions: Petition) => {
+    f: (o) => (userOptions) => {
       //getting name
-      const currentName = getName(o)(sym);
+      const currentName = getName(o ?? {})(sym);
 
       const options = getOptions(userOptions)(currentName) as PathType;
 
@@ -76,14 +73,14 @@ export const composeCompiledFile = (
 export const composecompiledClient = (
   compileClient: typeof pugModule.compileClient,
 ) =>
-  ((sym) => ({
+  ((sym) => type({
     name: sym,
     isFunction: true,
     type: {} as SourceType,
     // This plugin does not have a specific type requirement
-    f: (o: FunRouterOptions) => (userOptions: Petition) => {
+    f: (o) => (userOptions) => {
       //getting name
-      const currentName = getName(o)(sym);
+      const currentName = getName(o ?? {})(sym);
 
       const options = getOptions(userOptions)(currentName) as SourceType;
 
@@ -111,14 +108,14 @@ export const composeCompiledClientWithDependenciesTracked = (
     typeof pugModule.compileClientWithDependenciesTracked,
 ) =>
   (
-    (sym) => ({
+    (sym) => type({
       name: sym,
       isFunction: true,
       type: {} as SourceType,
       // This plugin does not have a specific type requirement
-      f: (o: FunRouterOptions) => (userOptions: Petition) => {
+      f: (o) => (userOptions) => {
         //getting name
-        const currentName = getName(o)(sym);
+        const currentName = getName(o ?? {})(sym);
 
         const options = getOptions(userOptions)(currentName) as SourceType;
 
@@ -145,14 +142,14 @@ export const composeCompiledClientWithDependenciesTracked = (
 export const composeCompiledFileClient = (
   compileFileClient: typeof pugModule.compileFileClient,
 ) =>
-  ((sym) => ({
+  ((sym) => type({
     name: sym,
     isFunction: true,
     type: {} as PathType,
     // This plugin does not have a specific type requirement
-    f: (o: FunRouterOptions) => (userOptions: Petition) => {
+    f: (o) => (userOptions) => {
       //getting name
-      const currentName = getName(o)(sym);
+      const currentName = getName(o ?? {})(sym);
 
       const options = getOptions(userOptions)(currentName) as PathType;
 
@@ -175,16 +172,16 @@ export const composeCompiledFileClient = (
     },
   }))(Symbol("composeCompiledFileClient"));
 
-export const render = (pugRender: typeof pugModule.render) => ({
+export const render = (pugRender: typeof pugModule.render) => type({
   name: Symbol.for("render"),
   isFunction: true,
   type: undefined,
-  f: (_: FunRouterOptions) => (_: Petition) => pugRender,
+  f: () => () => pugRender,
 });
 
-export const renderFile = (renderFile: typeof pugModule.render) => ({
+export const renderFile = (renderFile: typeof pugModule.render) => type({
   name: Symbol.for("render"),
   isFunction: true,
   type: {},
-  f: (_?: FunRouterOptions) => (_: Petition) => renderFile,
+  f: () => () => renderFile,
 });

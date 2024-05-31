@@ -1,3 +1,4 @@
+import { petitions } from "vixeny";
 import * as pugModule from "pug";
 
 type petitionType = (r: Request) => pugModule.LocalsObject | null;
@@ -57,8 +58,8 @@ export const pugStaticServerPlugin =
       root: string;
       path: string;
       relativeName: string;
-    }) => ({
-      type: "response",
+    }) => petitions.response()({
+
       path: option && "preserveExtension" in option && !option.preserveExtension
         ? ob.relativeName.slice(0, -4)
         : ob.relativeName,

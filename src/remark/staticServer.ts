@@ -1,5 +1,6 @@
 import { PluginTuple, unified } from "unified";
 import { readFileSync } from "node:fs";
+import { petitions } from "vixeny";
 
 type StaticServer = {
   preserveExtension?: boolean;
@@ -15,8 +16,8 @@ export const remarkStaticServer =
           root: string;
           path: string;
           relativeName: string;
-        }) => ({
-          type: "response",
+        }) => petitions.response()({
+
           path:
             option && "preserveExtension" in option && !option.preserveExtension
               ? ob.relativeName.slice(0, -3)

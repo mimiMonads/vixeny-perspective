@@ -2,6 +2,7 @@ import { TransformOptions } from "esbuild";
 import path from "node:path";
 import * as Dom from "react-dom/server";
 import * as React from "react";
+import { petitions } from "vixeny";
 
 type options = Omit<TransformOptions, "entryPoints">;
 
@@ -19,8 +20,7 @@ export const jsxStaticServer =
         root: string;
         path: string;
         relativeName: string;
-      }) => ({
-        type: "response",
+      }) => petitions.response()({
         path: ob.relativeName.slice(0, -4),
         r: ((v) => async () =>
           v

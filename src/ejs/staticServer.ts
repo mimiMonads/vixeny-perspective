@@ -1,4 +1,5 @@
 import * as ejsModule from "ejs";
+import { petitions } from "vixeny";
 
 type StaticServer = {
   preserveExtension?: boolean;
@@ -12,8 +13,7 @@ export const ejsStaticServerPlugin =
       root: string;
       path: string;
       relativeName: string;
-    }) => ({
-      type: "response",
+    }) => petitions.response()({
       path: option && "preserveExtension" in option && !option.preserveExtension
         ? ob.relativeName.slice(0, -4)
         : ob.relativeName,

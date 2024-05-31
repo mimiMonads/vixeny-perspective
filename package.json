@@ -1,10 +1,11 @@
 {
   "name": "vixeny-prespective",
-  "version": "0.1.12",
+  "version": "0.1.20",
   "description": "Engine views for Vixeny",
   "main": "main.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "testDeno": "deno test -A test/**/*.deno.test.ts",
+    "testBun": "bun test test/**/*.bun.test.ts"
   },
   "repository": {
     "type": "git",
@@ -27,13 +28,13 @@
     "postcss-nested": "^6.0.1",
     "pug": "^3.0.2",
     "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "sass": "^1.71.0",
-    "unified": "latest",
-    "react-dom": "^18.2.0"
+    "unified": "latest"
   },
   "dependencies": {
     "@types/ejs": "^3.1.5",
     "@types/pug": "^2.0.10",
-    "vixeny": "^0.0.932"
+    "vixeny": "^0.1.0"
   }
 }

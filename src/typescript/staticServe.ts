@@ -1,4 +1,5 @@
 import esbuild, { TransformOptions } from "esbuild";
+import { petitions } from "vixeny";
 
 type options = Omit<TransformOptions, "entryPoints">;
 
@@ -8,12 +9,12 @@ export const typescriptStaticServer =
   (build: typeof esbuild) => (esOptions?: StaticServer) => (
     {
       checker: (path: string) => path.includes(".ts"),
+      type: 'response',
       r: (ob: {
         root: string;
         path: string;
         relativeName: string;
-      }) => ({
-        type: "response",
+      }) => petitions.response()({
         path: ob.relativeName.slice(0, -3) + ".mjs",
         r: ((v) => async () =>
           new Response(

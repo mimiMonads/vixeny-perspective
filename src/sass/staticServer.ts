@@ -1,3 +1,4 @@
+import { petitions } from "vixeny";
 import * as sassModule from "sass";
 
 type StaticServer = {
@@ -12,8 +13,7 @@ export const sassStaticServer =
         root: string;
         path: string;
         relativeName: string;
-      }) => ({
-        type: "response",
+      }) => petitions.response()({
         path: ob.relativeName.slice(0, -5) + ".css",
         r: ((v) => async () =>
           new Response(
@@ -24,6 +24,6 @@ export const sassStaticServer =
               ]),
             },
           ))(""),
-      } as const),
+      } ),
     }
   );

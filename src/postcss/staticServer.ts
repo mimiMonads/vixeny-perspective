@@ -1,5 +1,6 @@
 import postcss from "postcss";
 import fs from "node:fs";
+import { petitions } from "vixeny";
 
 type uses = postcss.AcceptedPlugin[];
 
@@ -16,8 +17,7 @@ export const postcssStaticServer =
           root: string;
           path: string;
           relativeName: string;
-        }) => ({
-          type: "response",
+        }) => petitions.response()({
           path: ob.relativeName,
           r: ((v) => async () =>
             new Response(
