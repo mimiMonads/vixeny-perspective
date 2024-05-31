@@ -1,4 +1,4 @@
-import { vixeny } from "vixeny";
+import { composer, vixeny } from "vixeny";
 import { describe, expect, it } from "@jest/globals";
 import { pugStaticServerPlugin } from "../../src/pug/staticServer.ts";
 import * as pugModule from "pug";
@@ -20,8 +20,7 @@ const serve2 = vixeny()([
     path: "./public/",
     template: [
       pugStaticServerPlugin(pugModule.compileFile)({
-        petition: plugins.ObjectNull()({
-          type: "object",
+        petition: composer.objectNullRequest()({
           f: () => ({ name: "Dave" }),
         }),
       }),
