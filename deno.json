@@ -1,6 +1,6 @@
 {
   "imports": {
-    "vixeny": "https://deno.land/x/endofunctor@v0.1.10/main.ts",
+    "vixeny": "jsr:@vixeny/core",
     "ejs": "npm:ejs",
     "pug": "npm:pug",
     "unified": "npm:unified",

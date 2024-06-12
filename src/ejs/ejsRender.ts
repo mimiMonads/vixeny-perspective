@@ -1,27 +1,24 @@
 import * as ejsModule from "ejs";
-import { FunRouterOptions, Petition } from "vixeny/types";
+import { plugins } from "vixeny";
 
-const getName = (o: FunRouterOptions) => (sym: symbol) =>
-  Object
-    .keys(o?.cyclePlugin ?? [])
-    //@ts-ignore
-    .find((name) => o?.cyclePlugin[name].name === sym) as string;
+const {
+  getName,
+  getOptions,
+  type
+} = plugins;
 
-const getOptions = (userOptions: Petition) => (currentName: string) =>
-  "plugins" in userOptions && userOptions.plugins
-    ? userOptions.plugins[currentName]
-    : null;
+
 
 type Options = ejsModule.Options;
 type Compiled = { template: string; opts?: Options };
 
 export const ejsComposeCompiled = (compile: typeof ejsModule.compile) =>
-  ((sym) => ({
+  ((sym) => type({
     name: sym,
     isFunction: true,
     type: {} as Compiled,
     // This plugin does not have a specific type requirement
-    f: (o: FunRouterOptions) => (userOptions: Petition) => {
+    f: (o) => (userOptions) => {
       //getting name
       const currentName = getName(o)(sym);
 
@@ -47,17 +44,17 @@ export const ejsComposeCompiled = (compile: typeof ejsModule.compile) =>
   }))(Symbol("ejsComposeCompiled"));
 
 export const ejsRender = (render: typeof ejsModule.render) =>
-  ((sym) => ({
+  ((sym) => type({
     name: sym,
     isFunction: true,
     type: undefined,
-    f: (_: FunRouterOptions) => (_: Petition) => render,
+    f: () => () => render,
   }))(Symbol("ejsRender"));
 
 export const ejsComposeRenderFile = (renderFile: typeof ejsModule.renderFile) =>
-  ((sym) => ({
+  ((sym) => type({
     name: sym,
     isFunction: true,
     type: {} as never,
-    f: (_: FunRouterOptions) => (_: Petition) => renderFile,
+    f: () => () => renderFile,
   }))(Symbol("ejsRenderFile"));
