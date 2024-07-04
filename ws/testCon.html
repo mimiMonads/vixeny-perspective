@@ -40,7 +40,6 @@
       });
 
       socket.addEventListener('close', () => {
-        console.log('Disconnected from the WebSocket server, retrying...');
         setTimeout(connect, 250); 
       });
 
