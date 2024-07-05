@@ -1,12 +1,12 @@
 import { runtime } from "vixeny";
-import { VServe } from "./serverType";
+import type { VServe } from "./serverType.ts";
 import mainDeno from "./mainDeno.ts";
 import mainBun from "./mainBun.ts";
-import injectHtml from "vixeny/src/composer/injectHtml.ts";
+import {injectable} from './injectable.ts'
 
 const currentRT = runtime.name();
 
 const serve = (opt: VServe) =>
-  currentRT === "Deno" ? void mainDeno(opt) : void mainBun(opt);
+  currentRT === "Bun" ? void mainBun(opt) : void mainDeno(opt) ;
 
-export { injectHtml, serve };
+export { injectable, serve };

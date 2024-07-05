@@ -1,11 +1,11 @@
-import { VServe } from "./serverType";
+import type { VServe } from "./serverType.ts";
 
 let SERVER_TIME = Date.now() + 1000;
 
 export default (inf: VServe): void =>
   inf.liveReolading === true
     ? void Bun.serve({
-      fetch(req, server) {
+      fetch: (req, server) => {
         // Check if the request is an upgrade to WebSocket
 
         if (req.headers.get("upgrade") != "websocket") {

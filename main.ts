@@ -12,7 +12,6 @@ import {
   ejsComposeRenderFile,
   ejsRender,
 } from "./src/ejs/ejsRender.ts";
-
 import { pugStaticServerPlugin } from "./src/pug/staticServer.ts";
 import { ejsStaticServerPlugin } from "./src/ejs/staticServer.ts";
 import { remarkStaticServer } from "./src/remark/staticServer.ts";
@@ -21,11 +20,12 @@ import { postcssStaticServer } from "./src/postcss/staticServer.ts";
 import { typescriptStaticServer } from "./src/typescript/staticServe.ts";
 import { tsxStaticServer } from "./src/tsx/staticServe.ts";
 import { jsxStaticServer } from "./src/jsx/staticServe.ts";
+import { serve , injectable} from './ws/mainServe.ts'
 
 // @deno-types="npm:@types/ejs@^3.1.5"
-import * as ejsModule from "ejs";
+import type * as ejsModule from "ejs";
 // @deno-types="npm:@types/pug@^2.0.10"
-import * as pugModule from "pug";
+import type * as pugModule from "pug";
 
 export const pug = (pug: typeof pugModule) => ({
   compileFile: composeCompiledFile(pug.compileFile),
@@ -55,4 +55,6 @@ export {
   sassStaticServer,
   tsxStaticServer,
   typescriptStaticServer,
+  serve,
+  injectable,
 };

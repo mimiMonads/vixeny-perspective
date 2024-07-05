@@ -1,6 +1,6 @@
 {
   "name": "vixeny-perspective",
-  "version": "0.1.30",
+  "version": "0.1.43",
   "description": "Engine views for Vixeny",
   "main": "main.ts",
   "scripts": {
@@ -30,11 +30,15 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "sass": "^1.71.0",
-    "unified": "latest"
+    "unified": "latest",
+    "@types/bun": "latest"
   },
   "dependencies": {
     "@types/ejs": "^3.1.5",
     "@types/pug": "^2.0.10",
     "vixeny": "^0.1.10"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
   }
 }

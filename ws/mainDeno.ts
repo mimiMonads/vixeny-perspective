@@ -1,4 +1,4 @@
-import { VServe } from "./serverType";
+import type { VServe } from "./serverType.ts";
 
 let SERVER_TIME = Date.now() + 1000;
 
