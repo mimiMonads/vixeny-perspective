@@ -58,13 +58,16 @@ export const pugStaticServerPlugin =
       root: string;
       path: string;
       relativeName: string;
-    }) => petitions.response()({
-
-      path: option && "preserveExtension" in option && !option.preserveExtension
-        ? ob.relativeName.slice(0, -4)
-        : ob.relativeName,
-      r: option && "petition" in option && option.petition
-        ? onPetition(option.petition)(compileFile)(option?.default)(ob.path)
-        : onLazy(compileFile)(option?.default)(ob.path),
-    } as const),
+    }) =>
+      petitions.response()(
+        {
+          path:
+            option && "preserveExtension" in option && !option.preserveExtension
+              ? ob.relativeName.slice(0, -4)
+              : ob.relativeName,
+          r: option && "petition" in option && option.petition
+            ? onPetition(option.petition)(compileFile)(option?.default)(ob.path)
+            : onLazy(compileFile)(option?.default)(ob.path),
+        } as const,
+      ),
   });

@@ -8,23 +8,23 @@
 <body>
 
   <script>
-    let socket;
+    let SOCKET;
     let TIME;
 
     const ping =  () => {
-      if (socket && socket.readyState === WebSocket.OPEN) {
-        socket.send(Date.now().toString());
+      if (SOCKET && SOCKET.readyState === WebSocket.OPEN) {
+        SOCKET.send(Date.now().toString());
       }
     }
 
     function connect() {
-      socket = new WebSocket('ws://localhost:8000'); 
+      SOCKET = new WebSocket('ws://localhost:8000'); 
 
-      socket.addEventListener('open', () => {
+      SOCKET.addEventListener('open', () => {
         setTimeout(ping, 250);
       });
 
-      socket.addEventListener('message', (event) => {
+      SOCKET.addEventListener('message', (event) => {
 
         try {
          
@@ -39,11 +39,11 @@
         setTimeout(ping, 250);
       });
 
-      socket.addEventListener('close', () => {
+      SOCKET.addEventListener('close', () => {
         setTimeout(connect, 250); 
       });
 
-      socket.addEventListener('error', (error) => {
+      SOCKET.addEventListener('error', (error) => {
         console.error('WebSocket error: ', error);
       });
     }

@@ -1,41 +1,43 @@
-import { serve } from "bun";
+import { VServe } from "./serverType";
 
 let SERVER_TIME = Date.now() + 1000;
 
-serve({
-  fetch(req, server) {
-    // Check if the request is an upgrade to WebSocket
+export default (inf: VServe): void =>
+  inf.liveReolading === true
+    ? void Bun.serve({
+      fetch(req, server) {
+        // Check if the request is an upgrade to WebSocket
 
-    if (req.headers.get("upgrade") != "websocket") {
-      //serve
-      return new Response(null, { status: 501 });
-    }
-    server.upgrade(req)
-    return 
+        if (req.headers.get("upgrade") != "websocket") {
+          //serve
+          return inf.handler(req);
+        }
+        server.upgrade(req);
+        return;
+      },
+      websocket: {
+        open(ws) {
+          ws.send(SERVER_TIME.toString());
+        },
 
-  },
-  websocket: {
-    // Handler when a socket is opened
-    open(ws) {
-      console.log('hi')
-      ws.send(SERVER_TIME.toString());
-    },
-    // Handler when a message is received
-    message(ws, message) {
-      ws.send(SERVER_TIME.toString());
-    },
-    // Handler when a socket is closed
-    close(ws, code, reason) {
-      //console.log(`WebSocket closed with code: ${code}, reason: ${reason}`);
-    },
-    // Optional handler for when the socket is ready to receive more data
-    drain(ws) {
-      console.log(`WebSocket is ready for more data`);
-    },
-    
-    perMessageDeflate: true,
-  },
-  port: 8000, // You can specify the port here
-});
+        message(ws, message) {
+          ws.send(SERVER_TIME.toString());
+        },
 
-console.log("WebSocket server is running on ws://localhost:8000");
+        close(ws, code, reason) {
+        },
+
+        drain(ws) {
+          console.log(`WebSocket is ready for more data`);
+        },
+
+        perMessageDeflate: true,
+      },
+      port: inf.port ?? 8000,
+      hostname: inf.hostname ?? "localhost",
+    })
+    : void Bun.serve({
+      fetch: inf.handler,
+      port: inf.port ?? 8000,
+      hostname: inf.hostname ?? "localhost",
+    });

@@ -34,6 +34,6 @@ Deno.test("compile: validPath", async () => {
   const text = normalize(await response.text());
   assertEquals(
     typeof text,
-    'string',
+    "string",
   );
 });

@@ -13,17 +13,18 @@ export const sassStaticServer =
         root: string;
         path: string;
         relativeName: string;
-      }) => petitions.response()({
-        path: ob.relativeName.slice(0, -5) + ".css",
-        r: ((v) => async () =>
-          new Response(
-            v === "" ? v = sass.compile(ob.path, option?.uses).css : v,
-            {
-              headers: new Headers([
-                ["content-type", "text/css"],
-              ]),
-            },
-          ))(""),
-      } ),
+      }) =>
+        petitions.response()({
+          path: ob.relativeName.slice(0, -5) + ".css",
+          r: ((v) => async () =>
+            new Response(
+              v === "" ? v = sass.compile(ob.path, option?.uses).css : v,
+              {
+                headers: new Headers([
+                  ["content-type", "text/css"],
+                ]),
+              },
+            ))(""),
+        }),
     }
   );
