@@ -3422,6 +3422,7 @@
     "packageJson": {
       "dependencies": [
         "npm:@jest/globals@^29.7.0",
+        "npm:@types/bun@latest",
         "npm:@types/ejs@^3.1.5",
         "npm:@types/pug@^2.0.10",
         "npm:@types/react-dom@^18.2.19",
