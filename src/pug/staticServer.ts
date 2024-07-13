@@ -18,7 +18,7 @@ const onLazy =
         ((def) => (r: Request) =>
           new Response(def, {
             headers: new Headers([
-              ["content-type", "text/html"],
+              ["content-type", "text/html"] , ["Access-Control-Allow-Origin" , "*"],
             ]),
           }))(
             template(defaults || {}),
@@ -39,7 +39,7 @@ const onPetition =
             (ob) =>
               new Response(ob === null ? def : template(ob), {
                 headers: new Headers([
-                  ["content-type", "text/html"],
+                  ["content-type", "text/html"] , ["Access-Control-Allow-Origin" , "*"],
                 ]),
               })
           )(

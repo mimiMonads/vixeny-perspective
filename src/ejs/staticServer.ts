@@ -31,7 +31,7 @@ export const ejsStaticServerPlugin =
               ),
               {
                 headers: new Headers([
-                  ["content-type", "text/html"],
+                  ["content-type", "text/html"] , ["Access-Control-Allow-Origin" , "*"],
                 ]),
               },
             ),

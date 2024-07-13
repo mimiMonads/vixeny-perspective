@@ -4,6 +4,7 @@ let SERVER_TIME = Date.now() + 1000;
 
 export default (inf: VServe): void =>
   inf.liveReolading === true
+//@ts-check
     ? void Bun.serve({
       fetch: (req, server) => {
         // Check if the request is an upgrade to WebSocket
@@ -36,6 +37,7 @@ export default (inf: VServe): void =>
       port: inf.port ?? 8000,
       hostname: inf.hostname ?? "localhost",
     })
+    //@ts-check
     : void Bun.serve({
       fetch: inf.handler,
       port: inf.port ?? 8000,

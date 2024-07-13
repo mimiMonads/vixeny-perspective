@@ -1,6 +1,6 @@
 {
   "name": "vixeny-perspective",
-  "version": "0.1.44",
+  "version": "0.1.45",
   "description": "Engine views for Vixeny",
   "main": "main.ts",
   "scripts": {
@@ -19,6 +19,7 @@
   "homepage": "https://github.com/mimiMonads/vixeny-prespective#readme",
   "devDependencies": {
     "@jest/globals": "^29.7.0",
+    "@types/bun": "^1.1.6",
     "@types/react-dom": "^18.2.19",
     "autoprefixer": "^10.4.17",
     "ejs": "^3.1.9",
@@ -30,8 +31,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "sass": "^1.71.0",
-    "unified": "latest",
-    "@types/bun": "latest"
+    "unified": "latest"
   },
   "dependencies": {
     "@types/ejs": "^3.1.5",
