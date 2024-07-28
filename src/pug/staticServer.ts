@@ -1,12 +1,15 @@
 import { petitions, plugins } from "vixeny";
 import * as pugModule from "pug";
+import type { Petition } from "vixeny/src/morphism";
 
 type petitionType = (r: Request) => pugModule.LocalsObject | null;
 
 type StaticServer = {
   preserveExtension?: boolean;
   default?: pugModule.LocalsObject;
-  petition?: petitionType;
+  thisGlobalOptions? : ReturnType< typeof plugins.globalOptions> , 
+  globalF?: petitionType;
+  f?: Petition;
 };
 
 const onLazy =
@@ -15,7 +18,9 @@ const onLazy =
   (path: string) =>
     (
       (template) =>
+        // def means default
         ((def) => (h: Record<string, string>) =>
+          
           new Response(def, {
             headers: h,
           }))(
@@ -32,6 +37,7 @@ const onPetition =
   (path: string) =>
     (
       (template) =>
+        // def means default
         ((def) => (r: Request) => (h: Record<string, string>) => {
           try {
             // Getting the petition
@@ -66,18 +72,23 @@ export const pugStaticServerPlugin =
       type: "request",
       checker: (path: string) => path.includes(".pug"),
       f: (ob) =>
-        petitions.custom()(
+        petitions.custom(option?.thisGlobalOptions)(
           {
             path: option && "preserveExtension" in option &&
                 !option.preserveExtension
               ? ob.relativeName.slice(0, -4)
-              : ob.relativeName,
+              : ob.relativeName, 
+            // Headings
             headings: {
               headers: ".html",
             },
-            f: option && "petition" in option && option.petition
+            // Only 
+            options: {
+              only: ['headers', 'req' ]
+            },
+            f: option &&  option.globalF  
               ? ((fun) => ({ headers, req }) => fun(req)(headers))(
-                onPetition(option.petition)(compileFile)(option?.default)(
+                onPetition(option.globalF )(compileFile)(option?.default)(
                   ob.path,
                 ),
               )
