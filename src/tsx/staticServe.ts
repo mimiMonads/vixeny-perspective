@@ -53,7 +53,8 @@ const onProduction =
           ),
           {
             headers: new Headers([
-              ["content-type", "text/html"] , ["Access-Control-Allow-Origin" , "*"],
+              ["content-type", "text/html"],
+              ["Access-Control-Allow-Origin", "*"],
             ]),
           },
         )
@@ -61,7 +62,8 @@ const onProduction =
           def,
           {
             headers: new Headers([
-              ["content-type", "text/html"] , ["Access-Control-Allow-Origin" , "*"],
+              ["content-type", "text/html"],
+              ["Access-Control-Allow-Origin", "*"],
             ]),
           },
         ))(null)(null)(null);

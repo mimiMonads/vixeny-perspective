@@ -20,7 +20,7 @@ import { postcssStaticServer } from "./src/postcss/staticServer.ts";
 import { typescriptStaticServer } from "./src/typescript/staticServe.ts";
 import { tsxStaticServer } from "./src/tsx/staticServe.ts";
 import { jsxStaticServer } from "./src/jsx/staticServe.ts";
-import { serve , injectable} from './ws/mainServe.ts'
+import { injectable, serve } from "./ws/mainServe.ts";
 
 // @deno-types="npm:@types/ejs@^3.1.5"
 import type * as ejsModule from "ejs";
@@ -48,13 +48,13 @@ export const ejs = (ejs: typeof ejsModule) => ({
 
 export {
   ejsStaticServerPlugin,
+  injectable,
   jsxStaticServer,
   postcssStaticServer,
   pugStaticServerPlugin,
   remarkStaticServer,
   sassStaticServer,
+  serve,
   tsxStaticServer,
   typescriptStaticServer,
-  serve,
-  injectable,
 };

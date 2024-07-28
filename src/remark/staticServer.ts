@@ -32,7 +32,8 @@ export const remarkStaticServer =
                     : v,
                   {
                     headers: new Headers([
-                      ["content-type", "text/html"] , ["Access-Control-Allow-Origin" , "*"],
+                      ["content-type", "text/html"],
+                      ["Access-Control-Allow-Origin", "*"],
                     ]),
                   },
                 ))(""),

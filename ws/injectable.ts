@@ -2,7 +2,7 @@ type Host = {
   hostname?: "string";
   port?: number;
 };
-export const injectable =  (host?: Host) => `
+export const injectable = (host?: Host) => `
     <script>
     let SOCKET;
     let TIME;

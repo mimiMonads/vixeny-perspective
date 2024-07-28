@@ -28,7 +28,8 @@ export const jsxStaticServer =
               v
                 ? new Response(v, {
                   headers: new Headers([
-                    ["content-type", "text/html"] , ["Access-Control-Allow-Origin" , "*"], // Corrected content-type for HTML
+                    ["content-type", "text/html"],
+                    ["Access-Control-Allow-Origin", "*"], // Corrected content-type for HTML
                   ]),
                 })
                 : new Response(
@@ -43,7 +44,8 @@ export const jsxStaticServer =
                   ),
                   {
                     headers: new Headers([
-                      ["content-type", "text/html"] , ["Access-Control-Allow-Origin" , "*"], // Corrected content-type for HTML
+                      ["content-type", "text/html"],
+                      ["Access-Control-Allow-Origin", "*"], // Corrected content-type for HTML
                     ]),
                   },
                 ))(""),

@@ -1,4 +1,4 @@
-import { petitions } from "vixeny";
+import { petitions, plugins } from "vixeny";
 import * as pugModule from "pug";
 
 type petitionType = (r: Request) => pugModule.LocalsObject | null;
@@ -15,11 +15,9 @@ const onLazy =
   (path: string) =>
     (
       (template) =>
-        ((def) => (r: Request) =>
+        ((def) => (h: Record<string, string>) =>
           new Response(def, {
-            headers: new Headers([
-              ["content-type", "text/html"] , ["Access-Control-Allow-Origin" , "*"],
-            ]),
+            headers: h,
           }))(
             template(defaults || {}),
           )
@@ -34,40 +32,58 @@ const onPetition =
   (path: string) =>
     (
       (template) =>
-        ((def) => (r: Request) =>
-          (
-            (ob) =>
-              new Response(ob === null ? def : template(ob), {
-                headers: new Headers([
-                  ["content-type", "text/html"] , ["Access-Control-Allow-Origin" , "*"],
-                ]),
-              })
-          )(
-            petition(r),
-          ))(
-            template(defaults || {}),
-          )
+        ((def) => (r: Request) => (h: Record<string, string>) => {
+          try {
+            // Getting the petition
+            const maybeOfObj = petition(r);
+
+            // Returning the template
+            return new Response(
+              maybeOfObj === null ? def : template(maybeOfObj),
+              {
+                headers: h,
+              },
+            );
+          } catch (e: unknown) {
+            if (e instanceof Response) {
+              return e;
+            }
+
+            return new Response(null, {
+              status: 500,
+            });
+          }
+        })(
+          template(defaults || {}),
+        )
     )(
       compileFile(path),
     );
 
 export const pugStaticServerPlugin =
-  (compileFile: typeof pugModule.compileFile) => (option?: StaticServer) => ({
-    checker: (path: string) => path.includes(".pug"),
-    r: (ob: {
-      root: string;
-      path: string;
-      relativeName: string;
-    }) =>
-      petitions.response()(
-        {
-          path:
-            option && "preserveExtension" in option && !option.preserveExtension
+  (compileFile: typeof pugModule.compileFile) => (option?: StaticServer) =>
+    plugins.staticFilePlugin({
+      type: "request",
+      checker: (path: string) => path.includes(".pug"),
+      f: (ob) =>
+        petitions.custom()(
+          {
+            path: option && "preserveExtension" in option &&
+                !option.preserveExtension
               ? ob.relativeName.slice(0, -4)
               : ob.relativeName,
-          r: option && "petition" in option && option.petition
-            ? onPetition(option.petition)(compileFile)(option?.default)(ob.path)
-            : onLazy(compileFile)(option?.default)(ob.path),
-        } as const,
-      ),
-  });
+            headings: {
+              headers: ".html",
+            },
+            f: option && "petition" in option && option.petition
+              ? ((fun) => ({ headers, req }) => fun(req)(headers))(
+                onPetition(option.petition)(compileFile)(option?.default)(
+                  ob.path,
+                ),
+              )
+              : ((fun) => ({ headers }) => fun(headers))(
+                onLazy(compileFile)(option?.default)(ob.path),
+              ),
+          } as const,
+        ),
+    });
