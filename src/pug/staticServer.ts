@@ -1,6 +1,8 @@
 import { petitions, plugins } from "vixeny";
 import * as pugModule from "pug";
-import type { Petition } from "vixeny/src/morphism";
+
+
+type Petition = ReturnType<ReturnType<typeof petitions.common>>
 
 type petitionType = (r: Request) => pugModule.LocalsObject | null;
 

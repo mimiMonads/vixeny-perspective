@@ -1,5 +1,9 @@
 import type { VServe } from "./serverType.ts";
 
+// @ts-ignore-start
+
+
+
 let SERVER_TIME = Date.now() + 1000;
 
 export default (inf: VServe) =>
@@ -28,3 +32,5 @@ export default (inf: VServe) =>
       port: inf.port ?? 8000,
       hostname: inf.hostname ?? "localhost",
     }, inf.handler);
+
+    // @ts-ignore-end
