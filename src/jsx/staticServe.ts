@@ -1,4 +1,4 @@
-import { TransformOptions } from "esbuild";
+import type { TransformOptions } from "esbuild";
 import path from "node:path";
 import * as Dom from "react-dom/server";
 import * as React from "react";
