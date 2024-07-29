@@ -1,7 +1,7 @@
 import * as ejsModule from "ejs";
 import { petitions, plugins } from "vixeny";
-type Petition = ReturnType<ReturnType<typeof petitions.common>>
 
+type Petition = ReturnType<ReturnType<typeof petitions.common>>
 type petitionType = (r: Request) => ejsModule.Data | null;
 
 type StaticServer = {
@@ -15,19 +15,18 @@ type StaticServer = {
 const onLazy =
   (renderFile: typeof ejsModule.renderFile) =>
   (defaults?: ejsModule.Data) =>
-  (path: string) =>
-    (
-      (template) =>
-        // def means default
-        ((def) => (h: Record<string, string>) =>
-          
-          new Response(def, {
-            headers: h,
-          }))(
-            template(defaults || {}),
-          )
-    )(
-      renderFile(path, defaults || {}, {}),
+  (path: string) => async (headers: Record<string, string>) =>
+    new Response(
+      await renderFile(
+        path,
+        defaults ? defaults : {},
+        {
+          root: path.slice(0, path.lastIndexOf("/")),
+        },
+      ),
+      {
+        headers: headers,
+      },
     );
 
 const onPetition =
@@ -35,36 +34,21 @@ const onPetition =
   (renderFile: typeof ejsModule.renderFile) =>
   (defaults?: ejsModule.Data) =>
   (path: string) =>
-    (
-      (template) =>
-        // def means default
-        ((def) => (r: Request) => (h: Record<string, string>) => {
-          try {
-            // Getting the petition
-            const maybeOfObj = petition(r);
-
-            // Returning the template
-            return new Response(
-              maybeOfObj === null ? def : template(maybeOfObj, {}),
-              {
-                headers: h,
-              },
-            );
-          } catch (e: unknown) {
-            if (e instanceof Response) {
-              return e;
-            }
-
-            return new Response(null, {
-              status: 500,
-            });
-          }
-        })(
-          template(defaults || {}),
-        )
-    )(
-      renderFile(path, defaults || {}, {}),
-    );
+    async (headers: Record<string, string>, req: Request) => {
+      try {
+        const maybeOfObj = petition(req);
+        const data = maybeOfObj === null ? defaults : { ...defaults, ...maybeOfObj };
+        return new Response(
+          await renderFile(path, data, { root: path.slice(0, path.lastIndexOf("/")) }),
+          { headers: headers },
+        );
+      } catch (e: unknown) {
+        if (e instanceof Response) {
+          return e;
+        }
+        return new Response(null, { status: 500 });
+      }
+    };
 
 export const ejsStaticServerPlugin =
   (renderFile: typeof ejsModule.renderFile) => (option?: StaticServer) =>
@@ -72,29 +56,20 @@ export const ejsStaticServerPlugin =
       type: "request",
       checker: (path: string) => path.includes(".ejs"),
       f: (ob) =>
-        petitions.custom(option?.thisGlobalOptions)(
-          {
-            path: option && "preserveExtension" in option &&
-                !option.preserveExtension
+        petitions.custom(option?.thisGlobalOptions)({
+          path:
+            option && "preserveExtension" in option && !option.preserveExtension
               ? ob.relativeName.slice(0, -4)
               : ob.relativeName,
-            // Headings
-            headings: {
-              headers: ".html",
-            },
-            // Only 
-            options: {
-              only: ['headers', 'req' ]
-            },
-            f: option &&  option.globalF  
-              ? ((fun) => ({ headers, req }) => fun(req)(headers))(
-                onPetition(option.globalF)(renderFile)(option?.default)(
-                  ob.path,
-                ),
+          options: {
+            only: ['headers', 'req']
+          },
+          f: option && option.globalF
+            ? (fun => ({ headers, req }) => fun(headers, req))(
+                onPetition(option.globalF)(renderFile)(option?.default)(ob.path)
               )
-              : ((fun) => ({ headers }) => fun(headers))(
-                onLazy(renderFile)(option?.default)(ob.path),
+            : (fun => ({ headers }) => fun(headers))(
+                onLazy(renderFile)(option?.default ?? {})(ob.path)
               ),
-          } as const,
-        ),
+        } as const),
     });
