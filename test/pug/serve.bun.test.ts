@@ -3,7 +3,6 @@ import { describe, expect, it } from "@jest/globals";
 import { pugStaticServerPlugin } from "../../src/pug/staticServer.ts";
 import * as pugModule from "pug";
 
-
 const serve = vixeny()([
   {
     type: "fileServer",
@@ -13,8 +12,7 @@ const serve = vixeny()([
   },
 ]);
 
-const serve2 = vixeny({
-})([
+const serve2 = vixeny({})([
   {
     type: "fileServer",
     name: "/",
@@ -23,8 +21,8 @@ const serve2 = vixeny({
       pugStaticServerPlugin(pugModule.compileFile)({
         thisGlobalOptions: {
           cors: {
-            allowOrigins: '*'
-          }
+            allowOrigins: "*",
+          },
         },
         globalF: composer.objectNullRequest()({
           f: () => ({ name: "Dave" }),
@@ -43,8 +41,6 @@ describe("compile", async () => {
         .then((res) => res.text()),
     )
       .toBe("<p>'s Pug source code!</p>"));
-
-
 });
 
 describe("compile", async () => {

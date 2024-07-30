@@ -21,7 +21,6 @@ const onLazy =
       (template) =>
         // def means default
         ((def) => (h: Record<string, string>) =>
-          
           new Response(def, {
             headers: h,
           }))(
@@ -61,7 +60,7 @@ const onPetition =
             });
           }
         })(
-            comp(defaults || {}),
+          comp(defaults || {}),
         )
     )(
       compile(path),
@@ -78,18 +77,18 @@ export const svelteStaticServerPlugin =
             path: option && "preserveExtension" in option &&
                 !option.preserveExtension
               ? ob.relativeName.slice(0, -7)
-              : ob.relativeName, 
+              : ob.relativeName,
             // Headings
             headings: {
               headers: ".html",
             },
-            // Only 
+            // Only
             options: {
-              only: ['headers', 'req' ]
+              only: ["headers", "req"],
             },
-            f: option &&  option.globalF  
+            f: option && option.globalF
               ? ((fun) => ({ headers, req }) => fun(req)(headers))(
-                onPetition(option.globalF )(comp)(option?.default)(
+                onPetition(option.globalF)(comp)(option?.default)(
                   ob.path,
                 ),
               )
