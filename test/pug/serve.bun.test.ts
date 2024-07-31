@@ -52,4 +52,20 @@ describe("compile", async () => {
         .then((res) => res.text()),
     )
       .toBe("<p>Dave's Pug source code!</p>"));
+
+      expect(
+        await Promise.resolve(serve2(
+          new Request("http://localhost:8000/main.pug"),
+        ))
+          .then((res) => res.text()),
+      )
+        .toBe("<p>Dave's Pug source code!</p>")
+
+        expect(
+          await Promise.resolve(serve2(
+            new Request("http://localhost:8000/main.pug"),
+          ))
+            .then((res) => res.text()),
+        )
+          .toBe("<p>Dave's Pug source code!</p>")
 });
