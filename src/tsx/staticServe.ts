@@ -27,6 +27,18 @@ const renderComponentFromTSX = (esm: typeof esbuild) => async (path: string) =>
     })).outputFiles[0].contents,
   );
 
+
+const rendering = (esm: typeof esbuild) =>
+   (ReactModule: typeof React) => async (path:string) =>  new Function(
+  "React",
+  "module",
+  `${await renderComponentFromTSX(esm)(
+    path,
+  )}; return module.exports;`,
+)(ReactModule, { exports: {} }).default 
+
+;
+
 const onProduction =
   (esm: typeof esbuild) =>
   (DomModule: typeof Dom) =>
@@ -41,14 +53,7 @@ const onProduction =
         ? new Response(
           def = DomModule.renderToString(
             component = ReactModule.createElement(
-              element = new Function(
-                "React",
-                "module",
-                `${await renderComponentFromTSX(esm)(
-                  path,
-                )}; return module.exports;`,
-              )(ReactModule, { exports: {} }).default,
-              opt?.default,
+              element = await rendering(esm)(ReactModule)(path)
             ),
           ),
           {
