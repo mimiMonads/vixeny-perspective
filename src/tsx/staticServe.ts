@@ -42,7 +42,6 @@ const onProduction =
   (esm: typeof esbuild) =>
   (DomModule: typeof Dom) =>
   (ReactModule: typeof React) =>
-  (opt: StaticServer) =>
   (path: string) =>
     ((element: any) =>
     (component: any) =>
@@ -86,7 +85,7 @@ export const tsxStaticServer =
               only: ["headers"],
             },
         f: (fun => ({ headers } ) => fun(headers))(
-          onProduction(esm)(DomModule)(ReactModule)(opt)(ob.path)
+          onProduction(esm)(DomModule)(ReactModule)(ob.path)
         ),
       }),
     }
