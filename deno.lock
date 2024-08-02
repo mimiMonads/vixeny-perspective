@@ -3466,6 +3466,7 @@
         "npm:react-dom@^18.2.0",
         "npm:react@^18.2.0",
         "npm:sass@^1.71.0",
+        "npm:svelte@^4.2.18",
         "npm:unified@latest",
         "npm:vixeny@^0.1.47"
       ]

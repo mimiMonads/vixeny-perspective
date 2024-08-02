@@ -1,19 +1,20 @@
 import * as esbuild from "esbuild";
 import * as React from "react";
 import * as Dom from "react-dom/server";
+import { plugins , petitions} from "vixeny";
 
-type petitionType = (
-  r: Request,
-) =>
-  | (Promise<{ [keys: string]: any } | null>)
-  | ({ [keys: string]: any } | null);
 
-type StaticServer = {
-  default?: {
-    [args: string]: any;
+type Petition = ReturnType<ReturnType<typeof petitions.common>>;
+
+
+
+  type StaticServer = {
+    preserveExtension?: boolean;
+    default?: Record<string, unknown>;
+    thisGlobalOptions?: ReturnType<typeof plugins.globalOptions>;
+    globalF?: Record<string, unknown> | null
+    f?: Petition;
   };
-  //petition?: petitionType;
-};
 
 const renderComponentFromTSX = (esm: typeof esbuild) => async (path: string) =>
   new TextDecoder("utf-8").decode(
@@ -35,9 +36,7 @@ const rendering = (esm: typeof esbuild) =>
   `${await renderComponentFromTSX(esm)(
     path,
   )}; return module.exports;`,
-)(ReactModule, { exports: {} }).default 
-
-;
+)(ReactModule, { exports: {} }).default ;
 
 const onProduction =
   (esm: typeof esbuild) =>
@@ -48,7 +47,7 @@ const onProduction =
     ((element: any) =>
     (component: any) =>
     (def: string | null) =>
-    async (r: Request) =>
+    async (headers: Record<string, string>) =>
       def === null
         ? new Response(
           def = DomModule.renderToString(
@@ -57,19 +56,13 @@ const onProduction =
             ),
           ),
           {
-            headers: new Headers([
-              ["content-type", "text/html"],
-              ["Access-Control-Allow-Origin", "*"],
-            ]),
+            headers: headers
           },
         )
         : new Response(
           def,
           {
-            headers: new Headers([
-              ["content-type", "text/html"],
-              ["Access-Control-Allow-Origin", "*"],
-            ]),
+            headers: headers,
           },
         ))(null)(null)(null);
 
@@ -77,17 +70,24 @@ export const tsxStaticServer =
   (DomModule: typeof Dom) =>
   (ReactModule: typeof React) =>
   (esm: typeof esbuild) =>
-  (opt: StaticServer) => (
+  (opt: StaticServer) => plugins.staticFilePlugin(
     {
+      type: 'request',
       checker: (path: string) => path.endsWith(".tsx"),
-      r: (ob: {
-        root: string;
-        path: string;
-        relativeName: string;
-      }) => ({
-        type: "response",
+      f: (ob) => petitions.custom(opt?.thisGlobalOptions)
+      ({
         path: ob.relativeName.slice(0, -4),
-        r: onProduction(esm)(DomModule)(ReactModule)(opt)(ob.path),
-      } as const),
+            // Headings
+            headings: {
+              headers: ".html",
+            },
+            // Only
+            options: {
+              only: ["headers"],
+            },
+        f: (fun => ({ headers } ) => fun(headers))(
+          onProduction(esm)(DomModule)(ReactModule)(opt)(ob.path)
+        ),
+      }),
     }
   );
