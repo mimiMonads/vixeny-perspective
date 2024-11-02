@@ -10,6 +10,8 @@ type StaticServer = {
   root: string;
 };
 
+
+
 export const jsxStaticServer =
   (DomModule: typeof Dom) =>
   (ReactModule: typeof React) =>

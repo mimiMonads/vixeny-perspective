@@ -1,6 +1,6 @@
-import { vixeny } from "vixeny";
+import { vixeny , plugins , petitions } from "vixeny";
 import { ejsStaticServerPlugin } from "../../src/ejs/staticServer.ts";
-import * as ejsModule from "ejs";
+import { renderFile } from "ejs";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 const normalize = (s: string) =>
   s.replace(/(?<!`|\$\{.*)(["'])(?:(?=(\\?))\2.)*?\1/g, " ")
@@ -12,7 +12,11 @@ const serve = vixeny()([
     type: "fileServer",
     name: "/",
     path: "./public/ejs/public/",
-    template: [ejsStaticServerPlugin(ejsModule.renderFile)()],
+    template: [ejsStaticServerPlugin({
+      renderFile,
+      plugins,
+      petitions
+    })],
   },
 ]);
 
@@ -22,8 +26,13 @@ const serve2 = vixeny()([
     name: "/",
     path: "./public/ejs/public/",
     template: [
-      ejsStaticServerPlugin(ejsModule.renderFile)({
-        preserveExtension: false,
+      ejsStaticServerPlugin({
+        renderFile,
+        plugins,
+        petitions,
+        option: {
+          preserveExtension: false,
+        }
       }),
     ],
   },

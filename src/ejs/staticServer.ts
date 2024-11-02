@@ -1,13 +1,13 @@
-import * as ejsModule from "ejs";
-import { petitions, plugins } from "vixeny";
+import type * as ejsModule from "ejs";
+import type * as Vixeny from "vixeny";
 
-type Petition = ReturnType<ReturnType<typeof petitions.common>>;
+type Petition = ReturnType<ReturnType<typeof Vixeny.petitions.common>>;
 type petitionType = (r: Request) => ejsModule.Data | null;
 
 type StaticServer = {
   preserveExtension?: boolean;
   default?: ejsModule.Data;
-  thisGlobalOptions?: ReturnType<typeof plugins.globalOptions>;
+  thisGlobalOptions?: ReturnType<typeof Vixeny.plugins.globalOptions>;
   globalF?: petitionType;
   f?: Petition;
 };
@@ -56,11 +56,21 @@ const onPetition =
   };
 
 export const ejsStaticServerPlugin =
-  (renderFile: typeof ejsModule.renderFile) => (option?: StaticServer) =>
-    plugins.staticFilePlugin({
-      type: "request",
-      checker: (path: string) => path.includes(".ejs"),
-      f: (ob) =>
+  ( obj : {
+    renderFile: typeof ejsModule.renderFile,
+    plugins: typeof Vixeny.plugins;
+    petitions: typeof Vixeny.petitions;
+    option?: StaticServer
+    }
+  ) => 
+  {
+
+    const { renderFile , petitions, plugins , option} = obj
+    
+    return plugins.staticFilePlugin({
+      type: "add",
+      checker: (ctx) => ctx.path.includes(".ejs"),
+      p: (ob) =>
         petitions.custom(option?.thisGlobalOptions)(
           {
             path: option && "preserveExtension" in option &&
@@ -81,4 +91,5 @@ export const ejsStaticServerPlugin =
               ),
           } as const,
         ),
-    });
+    })
+  }
