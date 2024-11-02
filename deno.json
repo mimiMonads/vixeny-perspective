@@ -1,6 +1,6 @@
 {
   "imports": {
-    "vixeny": "jsr:@vixeny/core@0.1.47",
+    "vixeny": "jsr:@vixeny/core@0.1.49",
     "ejs": "npm:ejs",
     "pug": "npm:pug",
     "unified": "npm:unified",

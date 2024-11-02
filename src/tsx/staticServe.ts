@@ -1,20 +1,19 @@
 import * as esbuild from "esbuild";
 import * as React from "react";
 import * as Dom from "react-dom/server";
-import { plugins , petitions} from "vixeny";
-
+import { petitions, plugins } from "vixeny";
 
 type Petition = ReturnType<ReturnType<typeof petitions.common>>;
 
+type petitionType = (r: Request) => Record<string, unknown> | null;
 
-
-  type StaticServer = {
-    preserveExtension?: boolean;
-    default?: Record<string, unknown>;
-    thisGlobalOptions?: ReturnType<typeof plugins.globalOptions>;
-    globalF?: Record<string, unknown> | null
-    f?: Petition;
-  };
+type StaticServer = {
+  preserveExtension?: boolean;
+  default?: Record<string, unknown>;
+  thisGlobalOptions?: ReturnType<typeof plugins.globalOptions>;
+  globalF?: petitionType;
+  f?: Petition;
+};
 
 const renderComponentFromTSX = (esm: typeof esbuild) => async (path: string) =>
   new TextDecoder("utf-8").decode(
@@ -28,15 +27,45 @@ const renderComponentFromTSX = (esm: typeof esbuild) => async (path: string) =>
     })).outputFiles[0].contents,
   );
 
+const rendering =
+  (esm: typeof esbuild) =>
+  (ReactModule: typeof React) =>
+  async (path: string) =>
+    new Function(
+      "React",
+      "module",
+      `${await renderComponentFromTSX(esm)(
+        path,
+      )}; return module.exports;`,
+    )(ReactModule, { exports: {} }).default;
 
-const rendering = (esm: typeof esbuild) =>
-   (ReactModule: typeof React) => async (path:string) =>  new Function(
-  "React",
-  "module",
-  `${await renderComponentFromTSX(esm)(
-    path,
-  )}; return module.exports;`,
-)(ReactModule, { exports: {} }).default ;
+const onPetition =
+  (esm: typeof esbuild) =>
+  (DomModule: typeof Dom) =>
+  (ReactModule: typeof React) =>
+  (f: petitionType) =>
+  (path: string) =>
+    ((element: any) =>
+    (component: any) =>
+    (def: string | null) =>
+    async (headers: Record<string, string>) =>
+      def === null
+        ? new Response(
+          def = DomModule.renderToString(
+            component = ReactModule.createElement(
+              element = await rendering(esm)(ReactModule)(path),
+            ),
+          ),
+          {
+            headers: headers,
+          },
+        )
+        : new Response(
+          def,
+          {
+            headers: headers,
+          },
+        ))(null)(null)(null);
 
 const onProduction =
   (esm: typeof esbuild) =>
@@ -51,11 +80,11 @@ const onProduction =
         ? new Response(
           def = DomModule.renderToString(
             component = ReactModule.createElement(
-              element = await rendering(esm)(ReactModule)(path)
+              element = await rendering(esm)(ReactModule)(path),
             ),
           ),
           {
-            headers: headers
+            headers: headers,
           },
         )
         : new Response(
@@ -69,13 +98,14 @@ export const tsxStaticServer =
   (DomModule: typeof Dom) =>
   (ReactModule: typeof React) =>
   (esm: typeof esbuild) =>
-  (opt: StaticServer) => plugins.staticFilePlugin(
-    {
-      type: 'request',
-      checker: (path: string) => path.endsWith(".tsx"),
-      f: (ob) => petitions.custom(opt?.thisGlobalOptions)
-      ({
-        path: ob.relativeName.slice(0, -4),
+  (opt: StaticServer) =>
+    plugins.staticFilePlugin(
+      {
+        type: "request",
+        checker: (path: string) => path.endsWith(".tsx"),
+        f: (ob) =>
+          petitions.custom(opt?.thisGlobalOptions)({
+            path: ob.relativeName.slice(0, -4),
             // Headings
             headings: {
               headers: ".html",
@@ -84,9 +114,9 @@ export const tsxStaticServer =
             options: {
               only: ["headers"],
             },
-        f: (fun => ({ headers } ) => fun(headers))(
-          onProduction(esm)(DomModule)(ReactModule)(ob.path)
-        ),
-      }),
-    }
-  );
+            f: ((fun) => ({ headers }) => fun(headers))(
+              onProduction(esm)(DomModule)(ReactModule)(ob.path),
+            ),
+          }),
+      },
+    );

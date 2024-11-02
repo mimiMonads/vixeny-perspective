@@ -1,56 +1,96 @@
-import { composer, vixeny } from "vixeny";
+import { composer, petitions, plugins, vixeny } from "vixeny";
 import { describe, expect, it } from "@jest/globals";
 import { pugStaticServerPlugin } from "../../src/pug/staticServer.ts";
-import * as pugModule from "pug";
+import { compileFile } from "pug";
 
 const serve = vixeny()([
   {
     type: "fileServer",
     name: "/",
     path: "./public/",
-    template: [pugStaticServerPlugin(pugModule.compileFile)()],
+    template: [
+      pugStaticServerPlugin({
+        compileFile,
+        plugins,
+        petitions,
+      }),
+    ],
   },
 ]);
 
-const serve2 = vixeny({})([
+const serve2 = vixeny({
+  cors: {
+    allowOrigins: "*",
+  },
+})([
   {
     type: "fileServer",
     name: "/",
     path: "./public/",
     template: [
-      pugStaticServerPlugin(pugModule.compileFile)({
-        thisGlobalOptions: {
-          cors: {
-            allowOrigins: "*",
-          },
+      pugStaticServerPlugin({
+        compileFile,
+        plugins,
+        petitions,
+        option: {
+          globalF: composer.objectNullRequest()({
+            f: () => ({ name: "Chole" }),
+          }),
         },
-        globalF: composer.objectNullRequest()({
-          f: () => ({ name: "Dave" }),
-        }),
       }),
     ],
   },
 ]);
 
 describe("compile", async () => {
-  it("validPath", async () =>
+  it("validPathWithPetition", async () => {
+    const response = await Promise.resolve(serve(
+      new Request("http://localhost:8000/main.pug"),
+    ));
+
+    const text = await response.text();
+    const header = response.headers.toJSON();
+
     expect(
-      await Promise.resolve(serve(
-        new Request("http://localhost:8000/main.pug"),
-      ))
-        .then((res) => res.text()),
+      text,
     )
-      .toBe("<p>'s Pug source code!</p>"));
+      .toBe("<p>'s Pug source code!</p>");
+
+    expect(
+      header["content-type"],
+    )
+      .toBe(
+        "text/html",
+      );
+  });
 });
 
 describe("compile", async () => {
-  it("validPathWithPetition", async () =>
-    expect(
-      await Promise.resolve(serve2(
-        new Request("http://localhost:8000/main.pug"),
-      ))
-        .then((res) => res.text()),
-    )
-      .toBe("<p>Dave's Pug source code!</p>"));
+  it("validPathWithPetition", async () => {
+    const response = await Promise.resolve(serve2(
+      new Request("http://localhost:8000/main.pug"),
+    ));
 
+    const text = await response.text();
+    const header = response.headers.toJSON();
+
+    expect(
+      text,
+    )
+      .toBe("<p>Chole's Pug source code!</p>");
+
+    expect(
+      header["content-type"],
+    )
+      .toBe(
+        "text/html",
+      );
+
+    expect(
+      header["access-control-allow-origin"],
+    )
+      .toBe(
+        "*",
+      );
+  });
 });
