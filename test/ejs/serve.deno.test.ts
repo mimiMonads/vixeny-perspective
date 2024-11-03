@@ -1,4 +1,4 @@
-import { vixeny , plugins , petitions } from "vixeny";
+import { petitions, plugins, vixeny } from "vixeny";
 import { ejsStaticServerPlugin } from "../../src/ejs/staticServer.ts";
 import { renderFile } from "ejs";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
@@ -15,7 +15,7 @@ const serve = vixeny()([
     template: [ejsStaticServerPlugin({
       renderFile,
       plugins,
-      petitions
+      petitions,
     })],
   },
 ]);
@@ -32,7 +32,7 @@ const serve2 = vixeny()([
         petitions,
         option: {
           preserveExtension: false,
-        }
+        },
       }),
     ],
   },

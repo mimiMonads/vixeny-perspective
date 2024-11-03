@@ -1,4 +1,4 @@
-import { vixeny } from "vixeny";
+import { petitions, plugins, vixeny } from "vixeny";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { sassStaticServer } from "../../src/sass/staticServer.ts";
 import * as sass from "sass";
@@ -9,7 +9,11 @@ const serve = vixeny()([
     name: "/",
     path: "./public/sass",
     template: [
-      sassStaticServer(sass)(),
+      sassStaticServer({
+        sass,
+        plugins,
+        petitions,
+      }),
     ],
   },
 ]);

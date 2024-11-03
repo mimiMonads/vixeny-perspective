@@ -1,5 +1,5 @@
-import { vixeny } from "vixeny";
-import { Plugin, PluginTuple, unified } from "unified";
+import { petitions, plugins, vixeny } from "vixeny";
+import { type PluginTuple, unified } from "unified";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { remarkStaticServer } from "../../src/remark/staticServer.ts";
 
@@ -22,8 +22,11 @@ const serve = vixeny()([
     name: "/",
     path: "./public/remark",
     template: [
-      remarkStaticServer(unified)(
-        {
+      remarkStaticServer({
+        unified,
+        plugins,
+        petitions,
+        options: {
           uses: [
             [remarkParse] as PluginTuple,
             [remarkRehype] as unknown as PluginTuple,
@@ -33,7 +36,7 @@ const serve = vixeny()([
             [remarkRehype] as unknown as PluginTuple,
           ],
         },
-      ),
+      }),
     ],
   },
 ]);

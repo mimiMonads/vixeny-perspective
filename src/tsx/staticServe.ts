@@ -1,16 +1,16 @@
-import * as esbuild from "esbuild";
-import * as React from "react";
-import * as Dom from "react-dom/server";
-import { petitions, plugins } from "vixeny";
+import type * as esbuild from "esbuild";
+import type * as React from "react";
+import type * as Dom from "react-dom/server";
+import type * as Vixeny from "vixeny";
 
-type Petition = ReturnType<ReturnType<typeof petitions.common>>;
+type Petition = ReturnType<ReturnType<typeof Vixeny.petitions.common>>;
 
 type petitionType = (r: Request) => Record<string, unknown> | null;
 
 type StaticServer = {
   preserveExtension?: boolean;
   default?: Record<string, unknown>;
-  thisGlobalOptions?: ReturnType<typeof plugins.globalOptions>;
+  thisGlobalOptions?: ReturnType<typeof Vixeny.plugins.globalOptions>;
   globalF?: petitionType;
   f?: Petition;
 };
@@ -94,29 +94,33 @@ const onProduction =
           },
         ))(null)(null)(null);
 
-export const tsxStaticServer =
-  (DomModule: typeof Dom) =>
-  (ReactModule: typeof React) =>
-  (esm: typeof esbuild) =>
-  (opt: StaticServer) =>
-    plugins.staticFilePlugin(
-      {
-        type: "request",
-        checker: (path: string) => path.endsWith(".tsx"),
-        f: (ob) =>
-          petitions.custom(opt?.thisGlobalOptions)({
-            path: ob.relativeName.slice(0, -4),
-            // Headings
-            headings: {
-              headers: ".html",
-            },
-            // Only
-            options: {
-              only: ["headers"],
-            },
-            f: ((fun) => ({ headers }) => fun(headers))(
-              onProduction(esm)(DomModule)(ReactModule)(ob.path),
-            ),
-          }),
-      },
-    );
+export const tsxStaticServer = (args: {
+  Dom: typeof Dom;
+  React: typeof React;
+  esbuild: typeof esbuild;
+  opt: StaticServer;
+  plugins: typeof Vixeny.plugins;
+  petitions: typeof Vixeny.petitions;
+}) => {
+  const { Dom, React, esbuild, opt, petitions, plugins } = args;
+  return plugins.staticFilePlugin(
+    {
+      checker: (ctx) => ctx.path.endsWith(".tsx"),
+      p: (ob) =>
+        petitions.custom(opt?.thisGlobalOptions)({
+          path: ob.relativeName.slice(0, -4),
+          // Headings
+          headings: {
+            headers: ".html",
+          },
+          // Only
+          options: {
+            only: ["headers"],
+          },
+          f: ((fun) => ({ headers }) => fun(headers))(
+            onProduction(esbuild)(Dom)(React)(ob.path),
+          ),
+        }),
+    },
+  );
+};

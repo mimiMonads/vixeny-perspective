@@ -55,41 +55,37 @@ const onPetition =
     }
   };
 
-export const ejsStaticServerPlugin =
-  ( obj : {
-    renderFile: typeof ejsModule.renderFile,
-    plugins: typeof Vixeny.plugins;
-    petitions: typeof Vixeny.petitions;
-    option?: StaticServer
-    }
-  ) => 
-  {
+export const ejsStaticServerPlugin = (obj: {
+  renderFile: typeof ejsModule.renderFile;
+  plugins: typeof Vixeny.plugins;
+  petitions: typeof Vixeny.petitions;
+  option?: StaticServer;
+}) => {
+  const { renderFile, petitions, plugins, option } = obj;
 
-    const { renderFile , petitions, plugins , option} = obj
-    
-    return plugins.staticFilePlugin({
-      type: "add",
-      checker: (ctx) => ctx.path.includes(".ejs"),
-      p: (ob) =>
-        petitions.custom(option?.thisGlobalOptions)(
-          {
-            path: option && "preserveExtension" in option &&
-                !option.preserveExtension
-              ? ob.relativeName.slice(0, -4)
-              : ob.relativeName,
-            options: {
-              only: ["headers", "req"],
-            },
-            f: option && option.globalF
-              ? ((fun) => ({ headers, req }) => fun(headers, req))(
-                onPetition(option.globalF)(renderFile)(option?.default)(
-                  ob.path,
-                ),
-              )
-              : ((fun) => ({ headers }) => fun(headers))(
-                onLazy(renderFile)(option?.default ?? {})(ob.path),
+  return plugins.staticFilePlugin({
+    type: "add",
+    checker: (ctx) => ctx.path.includes(".ejs"),
+    p: (ob) =>
+      petitions.custom(option?.thisGlobalOptions)(
+        {
+          path: option && "preserveExtension" in option &&
+              !option.preserveExtension
+            ? ob.relativeName.slice(0, -4)
+            : ob.relativeName,
+          options: {
+            only: ["headers", "req"],
+          },
+          f: option && option.globalF
+            ? ((fun) => ({ headers, req }) => fun(headers, req))(
+              onPetition(option.globalF)(renderFile)(option?.default)(
+                ob.path,
               ),
-          } as const,
-        ),
-    })
-  }
+            )
+            : ((fun) => ({ headers }) => fun(headers))(
+              onLazy(renderFile)(option?.default ?? {})(ob.path),
+            ),
+        } as const,
+      ),
+  });
+};

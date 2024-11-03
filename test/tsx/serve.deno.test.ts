@@ -1,4 +1,4 @@
-import { vixeny } from "vixeny";
+import { petitions, plugins, vixeny } from "vixeny";
 
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { tsxStaticServer } from "../../src/tsx/staticServe.ts";
@@ -14,7 +14,13 @@ const serve = vixeny()([
     path: "./public/tsx",
     template: [
       //@ts-ignore
-      tsxStaticServer(Dom)(React)(esbuild)(),
+      tsxStaticServer({
+        Dom,
+        React,
+        esbuild,
+        plugins,
+        petitions,
+      }),
     ],
   },
 ]);
@@ -23,7 +29,13 @@ const normalize = (s: string) =>
     .replace(/\s+/g, " ")
     .replace(/ +/g, " ");
 
-// console.log( await(await serve(new Request("http://localhost:8080/main"))).text())
+// TODO : Addd test
+
+// Deno is making it really hard to test , good luck !
+
+console.log(
+  await (await serve(new Request("http://localhost:8080/main"))).text(),
+);
 // console.log( await(await serve(new Request("http://localhost:8080/main"))).text())
 // console.log( await(await serve(new Request("http://localhost:8080/main"))).text())
 // console.log( await(await serve(new Request("http://localhost:8080/main"))).text())

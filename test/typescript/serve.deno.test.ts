@@ -1,9 +1,8 @@
-import { vixeny } from "vixeny";
+import { petitions, plugins, vixeny } from "vixeny";
 
-import { assertEquals } from "https://deno.land/std@0.224.0/assert/assert_equals.ts";
-import { delay } from "https://deno.land/std@0.224.0/async/delay.ts";
 import { typescriptStaticServer } from "../../src/typescript/staticServe.ts";
-import esm from "esbuild";
+
+import * as esbuild from "esbuild";
 
 const serve = vixeny()([
   {
@@ -11,7 +10,11 @@ const serve = vixeny()([
     name: "/",
     path: "./public/typescript",
     template: [
-      typescriptStaticServer(esm)(),
+      typescriptStaticServer({
+        plugins,
+        esbuild,
+        petitions,
+      }),
     ],
   },
 ]);
@@ -19,6 +22,10 @@ const normalize = (s: string) =>
   s.replace(/(?<!`|\$\{.*)(["'])(?:(?=(\\?))\2.)*?\1/g, " ")
     .replace(/\s+/g, " ")
     .replace(/ +/g, " ");
+
+// TODO : Addd test
+
+// Deno is making it really hard to test , good luck !
 
 // Deno.test("compile", async () => {
 //   const response = (await serve(new Request("http://localhost:8080/hello.mjs")));

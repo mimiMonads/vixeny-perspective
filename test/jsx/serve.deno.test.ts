@@ -1,8 +1,8 @@
-import { vixeny } from "vixeny";
+import { petitions, plugins, vixeny } from "vixeny";
 
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { jsxStaticServer } from "../../src/jsx/staticServe.ts";
-
+import process from "node:process";
 import * as Dom from "react-dom/server";
 import * as React from "react";
 
@@ -12,8 +12,14 @@ const serve = vixeny()([
     name: "/",
     path: "./public/jsx",
     template: [
-      jsxStaticServer(Dom)(React)({
-        root: Deno.cwd(),
+      jsxStaticServer({
+        React,
+        Dom,
+        petitions,
+        plugins,
+        opt: {
+          root: process.cwd(),
+        },
       }),
     ],
   },

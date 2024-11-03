@@ -1,15 +1,21 @@
-import { petitions } from "vixeny";
-import * as sassModule from "sass";
+import type * as Vixeny from "vixeny";
+import type * as sassModule from "sass";
 
 type StaticServer = {
   uses?: sassModule.Options<"sync">;
 };
 
-export const sassStaticServer =
-  (sass: typeof sassModule) => (option?: StaticServer) => (
+export const sassStaticServer = (args: {
+  petitions: typeof Vixeny.petitions;
+  plugins: typeof Vixeny.plugins;
+  sass: typeof sassModule;
+  options?: StaticServer;
+}) => {
+  const { petitions, plugins, sass, options } = args;
+  return plugins.staticFilePlugin(
     {
-      checker: (path: string) => path.includes(".scss"),
-      r: (ob: {
+      checker: (ctx) => ctx.path.includes(".scss"),
+      p: (ob: {
         root: string;
         path: string;
         relativeName: string;
@@ -18,7 +24,7 @@ export const sassStaticServer =
           path: ob.relativeName.slice(0, -5) + ".css",
           r: ((v) => async () =>
             new Response(
-              v === "" ? v = sass.compile(ob.path, option?.uses).css : v,
+              v === "" ? v = sass.compile(ob.path, options?.uses).css : v,
               {
                 headers: new Headers([
                   ["content-type", "text/css"],
@@ -26,5 +32,6 @@ export const sassStaticServer =
               },
             ))(""),
         }),
-    }
+    },
   );
+};
