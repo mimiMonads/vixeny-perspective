@@ -98,16 +98,16 @@ export const tsxStaticServer = (args: {
   Dom: typeof Dom;
   React: typeof React;
   esbuild: typeof esbuild;
-  opt: StaticServer;
+  options: StaticServer;
   plugins: typeof Vixeny.plugins;
   petitions: typeof Vixeny.petitions;
 }) => {
-  const { Dom, React, esbuild, opt, petitions, plugins } = args;
+  const { Dom, React, esbuild, options, petitions, plugins } = args;
   return plugins.staticFilePlugin(
     {
       checker: (ctx) => ctx.path.endsWith(".tsx"),
       p: (ob) =>
-        petitions.custom(opt?.thisGlobalOptions)({
+        petitions.custom(options?.thisGlobalOptions)({
           path: ob.relativeName.slice(0, -4),
           // Headings
           headings: {

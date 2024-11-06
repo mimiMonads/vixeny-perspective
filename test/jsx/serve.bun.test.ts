@@ -15,7 +15,7 @@ const serve = vixeny()([
         Dom,
         petitions,
         plugins,
-        opt: {
+        options: {
           root: process.cwd(),
         },
       }),
@@ -30,5 +30,3 @@ const normalize = (s: string) =>
 const response = await serve(new Request("http://localhost:8080/main"));
 
 const text = normalize(await response.text());
-
-console.log(text);

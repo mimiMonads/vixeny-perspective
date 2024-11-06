@@ -17,7 +17,7 @@ const serve = vixeny()([
         Dom,
         petitions,
         plugins,
-        opt: {
+        options: {
           root: process.cwd(),
         },
       }),

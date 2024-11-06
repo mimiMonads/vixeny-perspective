@@ -30,7 +30,7 @@ const serve2 = vixeny()([
         renderFile,
         plugins,
         petitions,
-        option: {
+        options: {
           preserveExtension: false,
         },
       }),

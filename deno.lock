@@ -4,6 +4,7 @@
     "specifiers": {
       "jsr:@vixeny/core@0.1.49": "jsr:@vixeny/core@0.1.49",
       "npm:@jest/globals@^29.7.0": "npm:@jest/globals@29.7.0",
+      "npm:@types/bun@latest": "npm:@types/bun@1.1.12",
       "npm:@types/node": "npm:@types/node@18.16.19",
       "npm:@types/react-dom@^18.2.19": "npm:@types/react-dom@18.2.19",
       "npm:autoprefixer": "npm:autoprefixer@10.4.17_postcss@8.4.35",
@@ -25,7 +26,8 @@
       "npm:sass@^1.71.0": "npm:sass@1.71.1",
       "npm:svelte@^4.2.18": "npm:svelte@4.2.19",
       "npm:unified": "npm:unified@11.0.4",
-      "npm:unified@latest": "npm:unified@11.0.4"
+      "npm:unified@latest": "npm:unified@11.0.4",
+      "npm:vixeny@0.1.49": "npm:vixeny@0.1.49_typescript@5.6.3"
     },
     "jsr": {
       "@vixeny/core@0.1.49": {
@@ -665,6 +667,12 @@
           "@babel/types": "@babel/types@7.23.9"
         }
       },
+      "@types/bun@1.1.12": {
+        "integrity": "sha512-UkewJesRDP3+AW30Gc8hvxuIt+vHgYZXmVOKaXV8xnwAnMXTAs3XZDsa/jW+LSdAYhHslokSm72lq63FYYjZqA==",
+        "dependencies": {
+          "bun-types": "bun-types@1.1.32"
+        }
+      },
       "@types/estree@1.0.6": {
         "integrity": "sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==",
         "dependencies": {}
@@ -695,6 +703,12 @@
         "integrity": "sha512-IXl7o+R9iti9eBW4Wg2hx1xQDig183jj7YLn8F7udNceyfkbn1ZxmzZXuak20gR40D7pIkIY1kYGx5VIGbaHKA==",
         "dependencies": {}
       },
+      "@types/node@20.12.14": {
+        "integrity": "sha512-scnD59RpYD91xngrQQLGkE+6UrHUPzeKZWhhjBSa3HSkwjbQc38+q3RoIVEwxQGRw3M+j5hpNAM+lgV3cVormg==",
+        "dependencies": {
+          "undici-types": "undici-types@5.26.5"
+        }
+      },
       "@types/prop-types@15.7.11": {
         "integrity": "sha512-ga8y9v9uyeiLdpKddhxYQkxNDrfvuPrlFb0N1qnZZByvcElJaXthF1UhvCh9TLWJBEHeNtdnbysW7Y6Uq8CVng==",
         "dependencies": {}
@@ -724,6 +738,12 @@
       "@types/unist@3.0.2": {
         "integrity": "sha512-dqId9J8K/vGi5Zr7oo212BGii5m3q5Hxlkwy3WpYuKPklmBEvsbMYYyLxAQpSffdLl/gdW0XUpKWFvYmyoWCoQ==",
         "dependencies": {}
+      },
+      "@types/ws@8.5.12": {
+        "integrity": "sha512-3tPRkv1EtkDpzlgyKyI8pGsGZAGPEaXeu0DOj5DI25Ja91bdAYddYHbADRYVrZMRbfW+1l5YwXVDKohDJNQxkQ==",
+        "dependencies": {
+          "@types/node": "@types/node@18.16.19"
+        }
       },
       "@types/yargs-parser@21.0.3": {
         "integrity": "sha512-I4q9QU9MQv4oEOz4tAHJtNz1cwuLxn2F3xcc2iV5WdqLPpUnj30aUuxt1mAxYTG+oe8CZMV/+6rU4S4gRDzqtQ==",
@@ -927,6 +947,13 @@
       "buffer-from@1.1.2": {
         "integrity": "sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==",
         "dependencies": {}
+      },
+      "bun-types@1.1.32": {
+        "integrity": "sha512-Lxgux4InO/WRjSAEy3iyDscsnDXR8+3rgNDeZYjPAizFYjUraoNuMl9PuRd9XMgFZgdyQwaUX7/QHmOw5KGFQw==",
+        "dependencies": {
+          "@types/node": "@types/node@20.12.14",
+          "@types/ws": "@types/ws@8.5.12"
+        }
       },
       "call-bind@1.0.6": {
         "integrity": "sha512-Mj50FLHtlsoVfRfnHaZvyrooHcrlceNZdL/QBvJJVd9Ta55qCQK0gs4ss2oZDeV9zFCs6ewzYgVE5yfVmfFpVg==",
@@ -2543,6 +2570,14 @@
         "integrity": "sha512-t0rzBq87m3fVcduHDUFhKmyyX+9eo6WQjZvf51Ea/M0Q7+T374Jp1aUiyUl0GKxp8M/OETVHSDvmkyPgvX+X2w==",
         "dependencies": {}
       },
+      "typescript@5.6.3": {
+        "integrity": "sha512-hjcS1mhfuyi4WW8IWtjP7brDrG2cuDZukyrYrSauoXGNgx0S7zceP07adYkJycEr56BOUTNPzbInooiN3fn1qw==",
+        "dependencies": {}
+      },
+      "undici-types@5.26.5": {
+        "integrity": "sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==",
+        "dependencies": {}
+      },
       "unified@11.0.4": {
         "integrity": "sha512-apMPnyLjAX+ty4OrNap7yumyVAMlKx5IWU2wlzzUdYJO9A8f1p9m/gywF/GM2ZDFcjQPrx59Mc90KwmxsoklxQ==",
         "dependencies": {
@@ -2594,6 +2629,12 @@
           "@types/unist": "@types/unist@3.0.2",
           "unist-util-stringify-position": "unist-util-stringify-position@4.0.0",
           "vfile-message": "vfile-message@4.0.2"
+        }
+      },
+      "vixeny@0.1.49_typescript@5.6.3": {
+        "integrity": "sha512-8Cg4rTFMDE0gGEH/VS6cTuY865biiytlBwukFSpX28+EnfC7FOXAnnKlF9mmG74orhuSKmuYlwtj3zoZEI7FNg==",
+        "dependencies": {
+          "typescript": "typescript@5.6.3"
         }
       },
       "void-elements@3.1.0": {

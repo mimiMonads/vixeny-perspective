@@ -1,5 +1,5 @@
 import { petitions, plugins, vixeny } from "vixeny";
-
+import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { typescriptStaticServer } from "../../src/typescript/staticServe.ts";
 
 import * as esbuild from "esbuild";
@@ -23,16 +23,15 @@ const normalize = (s: string) =>
     .replace(/\s+/g, " ")
     .replace(/ +/g, " ");
 
-// TODO : Addd test
+//TODO : Addd test
 
-// Deno is making it really hard to test , good luck !
+//Deno is making it really hard to test , good luck !
 
 // Deno.test("compile", async () => {
-//   const response = (await serve(new Request("http://localhost:8080/hello.mjs")));
-//   await delay(100);
-//   const text = await Promise.resolve(response.text());
+//   const response =
+//   (await serve(new Request("http://localhost:8080/hello.mjs")))
 
-//   await delay(100);
+//   const text = await Promise.resolve(response.text());
 
 //   assertEquals(
 //     text === `// test/typescript/hello.ts\nvar test = () => console.log("Hello");\n\n// public/typescript/hello.ts\ntest();\n`,

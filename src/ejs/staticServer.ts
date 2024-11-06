@@ -59,31 +59,31 @@ export const ejsStaticServerPlugin = (obj: {
   renderFile: typeof ejsModule.renderFile;
   plugins: typeof Vixeny.plugins;
   petitions: typeof Vixeny.petitions;
-  option?: StaticServer;
+  options?: StaticServer;
 }) => {
-  const { renderFile, petitions, plugins, option } = obj;
+  const { renderFile, petitions, plugins, options } = obj;
 
   return plugins.staticFilePlugin({
     type: "add",
     checker: (ctx) => ctx.path.includes(".ejs"),
     p: (ob) =>
-      petitions.custom(option?.thisGlobalOptions)(
+      petitions.custom(options?.thisGlobalOptions)(
         {
-          path: option && "preserveExtension" in option &&
-              !option.preserveExtension
+          path: options && "preserveExtension" in options &&
+              !options.preserveExtension
             ? ob.relativeName.slice(0, -4)
             : ob.relativeName,
           options: {
             only: ["headers", "req"],
           },
-          f: option && option.globalF
+          f: options && options.globalF
             ? ((fun) => ({ headers, req }) => fun(headers, req))(
-              onPetition(option.globalF)(renderFile)(option?.default)(
+              onPetition(options.globalF)(renderFile)(options?.default)(
                 ob.path,
               ),
             )
             : ((fun) => ({ headers }) => fun(headers))(
-              onLazy(renderFile)(option?.default ?? {})(ob.path),
+              onLazy(renderFile)(options?.default ?? {})(ob.path),
             ),
         } as const,
       ),
