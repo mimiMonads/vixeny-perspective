@@ -37,7 +37,6 @@ export const jsxStaticServer = (args: {
                 v = Dom.renderToString(
                   React.createElement(
                     (await import(path.join(
-                      //@ts-ignore
                       options.root,
                       ob.path,
                     ))).default,

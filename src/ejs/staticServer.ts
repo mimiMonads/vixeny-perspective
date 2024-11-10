@@ -1,5 +1,6 @@
 import type * as ejsModule from "ejs";
 import type * as Vixeny from "vixeny";
+import type { plugingType } from "../../type";
 
 type Petition = ReturnType<ReturnType<typeof Vixeny.petitions.common>>;
 type petitionType = (r: Request) => ejsModule.Data | null;
@@ -11,6 +12,66 @@ type StaticServer = {
   globalF?: petitionType;
   f?: Petition;
 };
+
+const renderFileEJS = ( args : {
+  renderFile: typeof ejsModule.renderFile,
+  path: string,
+  plugins: plugingType
+}) => {
+ const { renderFile , path , plugins} = args
+
+ const symbol = Symbol('renderFileEJS')
+
+ return plugins.type({
+  name: symbol,
+  isFunction: true,
+  isAsync: true,
+  type: {} as ejsModule.Options,
+  f: async (ctx) => {
+
+    const name = ctx.currentName(symbol)
+    const options = ctx.getOptionsFromPetition<ejsModule.Options>(
+      ctx.getPetition()
+    )(name) ?? {}
+
+    async (data: ejsModule.Data) =>  await renderFile(path,data,options)
+  }
+ })
+};
+
+const defaultFileEJS = ( args : {
+  renderFile: typeof ejsModule.renderFile,
+  defaults?: ejsModule.Data,
+  path: string,
+  plugins: plugingType
+}) => {
+ const { renderFile , defaults, path , plugins} = args
+
+
+ const symbol = Symbol('defaultFileEJS')
+
+ return plugins.type({
+  name: symbol,
+  isFunction: true,
+  isAsync: true,
+  type: {} as ejsModule.Options,
+  f: async (ctx) => {
+
+    const name = ctx.currentName(symbol)
+    const options = ctx.getOptionsFromPetition<ejsModule.Options>(
+      ctx.getPetition()
+    )(name) ?? {}
+
+    const res = await renderFile(path,defaults,options)
+
+     return (_: void) =>  res
+  }
+ })
+};
+
+
+
+
 
 const onLazy =
   (renderFile: typeof ejsModule.renderFile) =>
