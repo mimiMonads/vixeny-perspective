@@ -12,8 +12,8 @@ type StaticServer = {
 };
 
 // Create unique symbols for plugin names to avoid naming collisions
-const  symbolRenderFilePug = Symbol('renderFilePug');
-const defaultFilePugSymbol = Symbol('defaultFilePug');
+const symbolRenderFilePug = Symbol("renderFilePug");
+const defaultFilePugSymbol = Symbol("defaultFilePug");
 
 /**
  * Creates a plugin to render Pug files using the provided compileFile function.
@@ -29,15 +29,16 @@ const renderFilePug = (args: {
     isFunction: true,
     isAsync: false,
     type: {} as pugModule.Options,
-    f:  (ctx) => {
+    f: (ctx) => {
       const currentName = ctx.currentName(symbolRenderFilePug);
       const currentPetition = ctx.getPetition();
       const globalOptions = ctx.getGlobalOptions();
 
-      if (typeof globalOptions.cyclePlugin[symbolRenderFilePug] !== 'object')
+      if (typeof globalOptions.cyclePlugin[symbolRenderFilePug] !== "object") {
         throw new Error(
-          'This plugin was designed to work with this app. Open a PR if you need a custom one.'
+          "This plugin was designed to work with this app. Open a PR if you need a custom one.",
         );
+      }
 
       // Retrieve options from Global Options
       const optionsFromGO = globalOptions.cyclePlugin[symbolRenderFilePug];
@@ -45,13 +46,12 @@ const renderFilePug = (args: {
 
       // Retrieve options from the current petition
       const currentOptions = ctx.getOptionsFromPetition<pugModule.Options>(
-        currentPetition
+        currentPetition,
       )(currentName) ?? {};
 
       const template = compileFile(path, currentOptions);
 
-      return (data: pugModule.LocalsObject | void) =>  template(data ?? {});
-      ;
+      return (data: pugModule.LocalsObject | void) => template(data ?? {});
     },
   });
 };
@@ -71,15 +71,16 @@ const defaultFilePug = (args: {
     isFunction: false,
     isAsync: false,
     type: {} as pugModule.Options,
-    f:  (ctx) => {
+    f: (ctx) => {
       const currentName = ctx.currentName(symbolRenderFilePug);
       const currentPetition = ctx.getPetition();
       const globalOptions = ctx.getGlobalOptions();
 
-      if (typeof globalOptions.cyclePlugin[symbolRenderFilePug] !== 'object')
+      if (typeof globalOptions.cyclePlugin[symbolRenderFilePug] !== "object") {
         throw new Error(
-          'This plugin was designed to work with this app. Open a PR if you need a custom one.'
+          "This plugin was designed to work with this app. Open a PR if you need a custom one.",
         );
+      }
 
       // Retrieve options from Global Options
       const optionsFromGO = globalOptions.cyclePlugin[symbolRenderFilePug];
@@ -87,7 +88,7 @@ const defaultFilePug = (args: {
 
       // Retrieve options from the current petition
       const currentOptions = ctx.getOptionsFromPetition<pugModule.Options>(
-        currentPetition
+        currentPetition,
       )(currentName) ?? {};
 
       const template = compileFile(path, currentOptions);
@@ -138,9 +139,7 @@ export const pugStaticServerPlugin = ({
   return plugins.staticFilePlugin({
     type: "add",
     checker: (ctx) => ctx.path.includes(".pug"),
-    p: (file) => 
-
-       ({
+    p: (file) => ({
       ...options.petition,
       // Lazy loading by default
       // lazy: true,
@@ -154,13 +153,11 @@ export const pugStaticServerPlugin = ({
         },
       },
       // Determine the router path
-      path:
-        options &&
-        "preserveExtension" in options &&
-        !options.preserveExtension
-          ? file.relativeName.slice(0, -4) // Remove the '.pug' extension
-          : file.relativeName,
-    }) 
-    
+      path: options &&
+          "preserveExtension" in options &&
+          !options.preserveExtension
+        ? file.relativeName.slice(0, -4) // Remove the '.pug' extension
+        : file.relativeName,
+    }),
   });
 };

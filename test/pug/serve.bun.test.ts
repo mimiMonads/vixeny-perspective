@@ -1,6 +1,9 @@
 import { petitions, plugins, vixeny, wrap } from "vixeny";
 import { describe, expect, it } from "bun:test";
-import { pugStaticServerPlugin , pugStaticServePlugin} from "../../src/pug/staticServer.ts";
+import {
+  pugStaticServePlugin,
+  pugStaticServerPlugin,
+} from "../../src/pug/staticServer.ts";
 import { compileFile } from "pug";
 
 // Create the plugin
@@ -8,17 +11,16 @@ const plugin = pugStaticServePlugin(petitions)(compileFile)({})(plugins);
 
 const petition = plugin({})({
   f: ({
-    renderPug , defaultPug
-  }) => new Response( renderPug()),
+    renderPug,
+    defaultPug,
+  }) => new Response(renderPug()),
 });
-
-
 
 const serve = await vixeny()([
   ...wrap()()
     .get({
-      path: '/',
-      f: () => 'huh'
+      path: "/",
+      f: () => "huh",
     })
     .unwrap(),
   {
@@ -28,24 +30,19 @@ const serve = await vixeny()([
     template: [
       pugStaticServerPlugin({
         plugins,
-        options:{
-          petition
+        options: {
+          petition,
         },
       }),
     ],
   },
 ]);
 
-
-
 describe("compile", async () => {
   it("validPathWithPetition", async () => {
-
-
-  
     const response = await Promise.resolve(serve(
       new Request("http://localhost:8000/main.pug"),
-    ))
+    ));
 
     const text = await response.text();
     const header = response.headers.toJSON();
@@ -63,5 +60,3 @@ describe("compile", async () => {
     //   );
   });
 });
-
-

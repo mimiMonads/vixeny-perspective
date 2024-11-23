@@ -5,7 +5,9 @@
       "jsr:@vixeny/core@0.1.51": "jsr:@vixeny/core@0.1.51",
       "npm:@types/bun@latest": "npm:@types/bun@1.1.12",
       "npm:@types/node": "npm:@types/node@18.16.19",
-      "npm:ejs@3.1.9": "npm:ejs@3.1.9"
+      "npm:ejs@3.1.9": "npm:ejs@3.1.9",
+      "npm:react-dom@18.2.0": "npm:react-dom@18.2.0_react@18.2.0",
+      "npm:react@18.2.0": "npm:react@18.2.0"
     },
     "jsr": {
       "@vixeny/core@0.1.51": {
@@ -115,6 +117,16 @@
           "minimatch": "minimatch@3.1.2"
         }
       },
+      "js-tokens@4.0.0": {
+        "integrity": "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==",
+        "dependencies": {}
+      },
+      "loose-envify@1.4.0": {
+        "integrity": "sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==",
+        "dependencies": {
+          "js-tokens": "js-tokens@4.0.0"
+        }
+      },
       "minimatch@3.1.2": {
         "integrity": "sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==",
         "dependencies": {
@@ -125,6 +137,26 @@
         "integrity": "sha512-lKwV/1brpG6mBUFHtb7NUmtABCb2WZZmm2wNiOA5hAb8VdCS4B3dtMWyvcoViccwAW/COERjXLt0zP1zXUN26g==",
         "dependencies": {
           "brace-expansion": "brace-expansion@2.0.1"
+        }
+      },
+      "react-dom@18.2.0_react@18.2.0": {
+        "integrity": "sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==",
+        "dependencies": {
+          "loose-envify": "loose-envify@1.4.0",
+          "react": "react@18.2.0",
+          "scheduler": "scheduler@0.23.2"
+        }
+      },
+      "react@18.2.0": {
+        "integrity": "sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==",
+        "dependencies": {
+          "loose-envify": "loose-envify@1.4.0"
+        }
+      },
+      "scheduler@0.23.2": {
+        "integrity": "sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==",
+        "dependencies": {
+          "loose-envify": "loose-envify@1.4.0"
         }
       },
       "supports-color@7.2.0": {
@@ -146,11 +178,15 @@
     "https://deno.land/x/pug/mod.ts": "https://deno.land/x/pug@v0.1.6/mod.ts",
     "https://esm.run/react": "https://cdn.jsdelivr.net/npm/react/+esm",
     "https://esm.run/react-dom/server": "https://cdn.jsdelivr.net/npm/react-dom/server/+esm",
+    "https://esm.sh/react": "https://esm.sh/react@18.3.1",
+    "https://esm.sh/react-dom/server": "https://esm.sh/react-dom@18.3.1/server",
     "https://esm.sh/rehype-document": "https://esm.sh/rehype-document@7.0.3",
     "https://esm.sh/rehype-format": "https://esm.sh/rehype-format@5.0.0",
     "https://esm.sh/rehype-stringify": "https://esm.sh/rehype-stringify@10.0.0",
     "https://esm.sh/remark-parse": "https://esm.sh/remark-parse@11.0.0",
-    "https://esm.sh/remark-rehype": "https://esm.sh/remark-rehype@11.1.0"
+    "https://esm.sh/remark-rehype": "https://esm.sh/remark-rehype@11.1.0",
+    "https://esm.sh/v128/@types/react@~18.3/index.d.ts": "https://esm.sh/v128/@types/react@18.2.38/index.d.ts",
+    "https://esm.sh/v135/@types/react-dom@~18.3/server~.d.ts": "https://esm.sh/v135/@types/react-dom@18.3.1/server~.d.ts"
   },
   "remote": {
     "https://cdn.jsdelivr.net/npm/react-dom/server/+esm": "2a9c0ad7e5ce9693de85553f9b46e80f287455a3949db4a8ce4c1469880116da",
@@ -877,11 +913,14 @@
     "https://deno.land/x/lodash@4.17.15-es/isSymbol.js": "f0dc1666c3cec2306cd4fd0f63a9a7ab1f25ed21d2db6664b1edc81bd3641a41",
     "https://deno.land/x/lodash@4.17.15-es/toString.js": "3f4c8d942944c3fe622e9fba36275b6291e834113619b266909822becfa94976",
     "https://deno.land/x/pug@v0.1.6/mod.ts": "9df7616eb45d868cce773386a74737224355b3ada8f94cf6d362f2bff152ca65",
+    "https://esm.sh/react-dom@18.3.1/server": "90e374c5323303d5315c780b19e5d6297ec5a569f9cee1df28ee1030dd23af9c",
+    "https://esm.sh/react@18.3.1": "52480d4c00855e4f76843caa4f2818eb001671523740cbf064cbd108721c29c8",
     "https://esm.sh/rehype-document@7.0.3": "f8716b0bd88fc8bcc5db040c1278260919fdd29bc12ecf123d69950527362047",
     "https://esm.sh/rehype-format@5.0.0": "2db27ad149a37cb668db9dd1aac30910bfed1726dce97f105b468c752774190c",
     "https://esm.sh/rehype-stringify@10.0.0": "97a4a6528032830331aa0225160e62f17a0f0e386bd0ef60047673f80cbf6db1",
     "https://esm.sh/remark-parse@11.0.0": "04d335dacbf824fb751d1b45356358349b8dfb2a565c19f397e9e2d325001046",
     "https://esm.sh/remark-rehype@11.1.0": "52458eea90badf6de90a1cdb5f29b0223290d01389ee6681a44fdae22d5833b5",
+    "https://esm.sh/stable/react@18.3.1/denonext/react.mjs": "fc048ffc55366baf7669519127d186761db72046e2bebf35fe8d0de3964defa3",
     "https://esm.sh/v128/pug@3.0.2/deno/pug.bundle.mjs": "321ae6e9704b02ddbd015fe8b60fc2893800353135e05f978581803f06886b3a",
     "https://esm.sh/v135/@ungap/structured-clone@1.2.0/denonext/structured-clone.mjs": "e683ab48ef7a3afd3bce9d1589d14177ddbdbf76fa1483524dddbeb6b142469f",
     "https://esm.sh/v135/ccount@2.0.1/denonext/ccount.mjs": "7b32092651a866fcc992c028982ce5e911356da7653baa3febb1a8ccb93e30f8",
@@ -925,6 +964,7 @@
     "https://esm.sh/v135/micromark-util-subtokenize@2.0.0/denonext/micromark-util-subtokenize.mjs": "670326123b1f9d91218cee035248437b97e5b6828f1d1eb01d40bc46f89bdc64",
     "https://esm.sh/v135/micromark@4.0.0/denonext/micromark.mjs": "dc73ed793c5bbc49ad7201a326fc724d08bc94372a291c184167b22c4edc320d",
     "https://esm.sh/v135/property-information@6.4.0/denonext/property-information.mjs": "8a61ad4cc589e3a30c752bd2eea7703cf286139c919f55f4fd289b90a7ac65a9",
+    "https://esm.sh/v135/react-dom@18.3.1/denonext/server.js": "b4db56f16b45002b5e9b127a9938ab45b12f39825161dffe875920510c524878",
     "https://esm.sh/v135/rehype-document@7.0.3/denonext/rehype-document.mjs": "4bb916df6eb4cbea8fcf0d572378d2962fbc8ad60a34fc2b2a07f9231a7dcb69",
     "https://esm.sh/v135/rehype-format@5.0.0/denonext/rehype-format.mjs": "924af4002775df39a8386ed2ec0fe237e7e65c967777b74543f9db1fcd4f2a00",
     "https://esm.sh/v135/rehype-minify-whitespace@6.0.0/denonext/rehype-minify-whitespace.mjs": "2f3c67c0d73ff17f130e8d51b1ded84c8659e6e856e56da4b921a99973f4d366",
@@ -952,8 +992,6 @@
       "npm:postcss@8.4.35",
       "npm:process@0.11.10",
       "npm:pug@3.0.2",
-      "npm:react-dom@18.2.0",
-      "npm:react@18.2.0",
       "npm:rehype-document@7.0.3",
       "npm:rehype-format@4.0.1",
       "npm:rehype-stringify@9.0.3",
@@ -967,6 +1005,7 @@
         "npm:@jest/globals@29.7.0",
         "npm:@types/bun@latest",
         "npm:@types/ejs@^3.1.5",
+        "npm:@types/pug@^2.0.10",
         "npm:@types/react-dom@18.2.19",
         "npm:autoprefixer@10.4.17",
         "npm:ejs@3.1.9",
