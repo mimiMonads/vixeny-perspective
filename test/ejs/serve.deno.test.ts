@@ -1,5 +1,5 @@
 import { petitions, plugins, vixeny } from "vixeny";
-import { ejsStaticServerPlugin } from "../../src/ejs/staticServer.ts";
+import { ejsStaticServerPlugin , ejsStaticServePlugin } from "../../src/ejs/staticServer.ts";
 import { renderFile } from "ejs";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 const normalize = (s: string) =>
@@ -7,15 +7,26 @@ const normalize = (s: string) =>
     .replace(/\s+/g, " ")
     .replace(/ +/g, " ");
 
+const plugin = ejsStaticServePlugin(
+  petitions
+)(renderFile)({})(plugins)
+
+plugin({})({
+  f: async ({
+     renderEJS
+  }) => new Response( await renderEJS() )
+})
 const serve = vixeny()([
   {
     type: "fileServer",
     name: "/",
     path: "./public/ejs/public/",
     template: [ejsStaticServerPlugin({
-      renderFile,
       plugins,
       petitions,
+      options:{
+        f
+      }
     })],
   },
 ]);

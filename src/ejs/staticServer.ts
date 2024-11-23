@@ -3,22 +3,17 @@ import type * as Vixeny from "vixeny";
 import type { plugingType } from "../../type";
 
 type Petition = ReturnType<ReturnType<typeof Vixeny.petitions.common>>;
-type petitionType = (r: Request) => ejsModule.Data | null;
 
 type StaticServer = {
   preserveExtension?: boolean;
-  default?: ejsModule.Data;
-  thisGlobalOptions?: ReturnType<typeof Vixeny.plugins.globalOptions>;
-  globalF?: petitionType;
-  f?: Petition;
+  f: Petition;
 };
 
 const renderFileEJS = ( args : {
   renderFile: typeof ejsModule.renderFile,
-  path: string,
   plugins: plugingType
 }) => {
- const { renderFile , path , plugins} = args
+ const { renderFile , plugins} = args
 
  const symbol = Symbol('renderFileEJS')
 
@@ -30,11 +25,16 @@ const renderFileEJS = ( args : {
   f: async (ctx) => {
 
     const name = ctx.currentName(symbol)
+    const petition = ctx.getPetition()
+    const path = petition.path.endsWith('.ejs')
+      ? petition.path
+      :  petition.path + '.ejs'
+
     const options = ctx.getOptionsFromPetition<ejsModule.Options>(
-      ctx.getPetition()
+      petition
     )(name) ?? {}
 
-    async (data: ejsModule.Data) =>  await renderFile(path,data,options)
+    return    async (data: ejsModule.Data) =>  await renderFile(path,data,options)
   }
  })
 };
@@ -42,111 +42,92 @@ const renderFileEJS = ( args : {
 const defaultFileEJS = ( args : {
   renderFile: typeof ejsModule.renderFile,
   defaults?: ejsModule.Data,
-  path: string,
   plugins: plugingType
 }) => {
- const { renderFile , defaults, path , plugins} = args
+ const { renderFile , defaults , plugins} = args
 
 
  const symbol = Symbol('defaultFileEJS')
 
  return plugins.type({
   name: symbol,
-  isFunction: true,
+  isFunction: false,
   isAsync: true,
   type: {} as ejsModule.Options,
   f: async (ctx) => {
 
     const name = ctx.currentName(symbol)
+    const petition = ctx.getPetition()
+    const path = petition.path.endsWith('.ejs')
+      ? petition.path
+      :  petition.path + '.ejs'
+
     const options = ctx.getOptionsFromPetition<ejsModule.Options>(
-      ctx.getPetition()
+      petition
     )(name) ?? {}
 
-    const res = await renderFile(path,defaults,options)
+    let res:(string | Promise<string>) = await renderFile(path,defaults,options)
 
-     return (_: void) =>  res
+     return async () =>  {
+
+
+        return res 
+     }
   }
  })
 };
 
 
+export const ejsStaticServePlugin =
+    (petition: typeof Vixeny.petitions) =>
+    (renderFile: typeof ejsModule.renderFile) =>
+    (defaults?: ejsModule.Data) =>
+    ( plugins: plugingType) =>
+       {
+      
+      const defaultEJS = defaultFileEJS({
+        renderFile,
+        defaults,
+        plugins
+      })
+
+      const renderEJS = renderFileEJS({
+        renderFile,
+        plugins
+      })
+
+      return petition.sealableAdd({
+        cyclePlugin:{
+          defaultEJS,
+          renderEJS
+        }
+      })
+    };
 
 
 
-const onLazy =
-  (renderFile: typeof ejsModule.renderFile) =>
-  (defaults?: ejsModule.Data) =>
-  (path: string) =>
-  async (headers: Record<string, string>) =>
-    new Response(
-      await renderFile(
-        path,
-        defaults ? defaults : {},
-        {
-          root: path.slice(0, path.lastIndexOf("/")),
-        },
-      ),
-      {
-        headers: headers,
-      },
-    );
-
-const onPetition =
-  (petition: petitionType) =>
-  (renderFile: typeof ejsModule.renderFile) =>
-  (defaults?: ejsModule.Data) =>
-  (path: string) =>
-  async (headers: Record<string, string>, req: Request) => {
-    try {
-      const maybeOfObj = petition(req);
-      const data = maybeOfObj === null
-        ? defaults
-        : { ...defaults, ...maybeOfObj };
-      return new Response(
-        await renderFile(path, data, {
-          root: path.slice(0, path.lastIndexOf("/")),
-        }),
-        { headers: headers },
-      );
-    } catch (e: unknown) {
-      if (e instanceof Response) {
-        return e;
-      }
-      return new Response(null, { status: 500 });
-    }
-  };
 
 export const ejsStaticServerPlugin = (obj: {
-  renderFile: typeof ejsModule.renderFile;
+
   plugins: typeof Vixeny.plugins;
-  petitions: typeof Vixeny.petitions;
-  options?: StaticServer;
+  options: StaticServer;
 }) => {
-  const { renderFile, petitions, plugins, options } = obj;
+  const {  plugins, options } = obj;
 
   return plugins.staticFilePlugin({
     type: "add",
     checker: (ctx) => ctx.path.includes(".ejs"),
-    p: (ob) =>
-      petitions.custom(options?.thisGlobalOptions)(
+    p: (ob) => 
+      (
         {
+          lazy: true,
+          ...options.f,
           path: options && "preserveExtension" in options &&
               !options.preserveExtension
             ? ob.relativeName.slice(0, -4)
             : ob.relativeName,
-          options: {
-            only: ["headers", "req"],
-          },
-          f: options && options.globalF
-            ? ((fun) => ({ headers, req }) => fun(headers, req))(
-              onPetition(options.globalF)(renderFile)(options?.default)(
-                ob.path,
-              ),
-            )
-            : ((fun) => ({ headers }) => fun(headers))(
-              onLazy(renderFile)(options?.default ?? {})(ob.path),
-            ),
-        } as const,
+
+        } 
       ),
   });
 };

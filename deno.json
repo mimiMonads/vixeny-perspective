@@ -1,21 +1,21 @@
 {
   "imports": {
-    "vixeny": "jsr:@vixeny/core@0.1.50",
-    "ejs": "npm:ejs",
-    "pug": "npm:pug",
-    "unified": "npm:unified",
-    "rehype-document": "https://esm.sh/rehype-document",
-    "rehype-format": "https://esm.sh/rehype-format",
-    "rehype-stringify": "https://esm.sh/rehype-stringify",
-    "remark-parse": "https://esm.sh/remark-parse",
-    "remark-rehype": "https://esm.sh/remark-rehype",
-    "postcss": "npm:postcss",
-    "postcss-nested": "npm:postcss-nested",
-    "autoprefixer": "npm:autoprefixer",
-    "sass": "npm:sass",
-    "esbuild": "npm:esbuild",
-    "react": "https://esm.run/react",
-    "react-dom/server": "https://esm.run/react-dom/server",
-    "cwd": "https://deno.land/std@0.110.0/node/process.ts"
+    "vixeny": "npm:@vixeny/core@0.1.51",
+    "ejs": "npm:ejs@3.1.9",
+    "pug": "npm:pug@3.0.2",
+    "unified": "npm:unified@10.1.2",
+    "rehype-document": "npm:rehype-document@7.0.3",
+    "rehype-format": "npm:rehype-format@4.0.1",
+    "rehype-stringify": "npm:rehype-stringify@9.0.3",
+    "remark-parse": "npm:remark-parse@10.0.2",
+    "remark-rehype": "npm:remark-rehype@10.0.1",
+    "postcss": "npm:postcss@8.4.35",
+    "postcss-nested": "npm:postcss-nested@6.0.1",
+    "autoprefixer": "npm:autoprefixer@10.4.17",
+    "sass": "npm:sass@1.71.0",
+    "esbuild": "npm:esbuild@0.20.1",
+    "react": "npm:react@18.2.0",
+    "react-dom/server": "npm:react-dom@18.2.0/server",
+    "cwd": "npm:process@0.11.10"
   }
 }
