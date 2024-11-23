@@ -15,29 +15,26 @@ type StaticServer = {
   f?: Petition;
 };
 
-
-import {cwd} from 'node:process'
-import fs from 'node:fs/promises';
-import path from 'node:path';
-
+import { cwd } from "node:process";
+import fs from "node:fs/promises";
+import path from "node:path";
 
 const compileToESM = async (code: string) => {
   const result = await esbuild.build({
     stdin: {
       contents: code,
       resolveDir: cwd(),
-      loader: 'tsx',
+      loader: "tsx",
     },
     bundle: true,
     write: false,
-    target: 'es2015',
-    platform: 'browser', 
-    format: 'esm',
-    external: ['react', 'react-dom'],
+    target: "es2015",
+    platform: "browser",
+    format: "esm",
+    external: ["react", "react-dom"],
   });
   return result.outputFiles[0].text;
 };
-
 
 const createDataURL = (code: string) => {
   const encodedCode = encodeURIComponent(code);
@@ -51,22 +48,17 @@ const renderingFile = async (code: string) => {
   return module.default;
 };
 
-
-
-
 const loadFileForRenderESM = async (filePath: string) => {
   try {
+    const code = await fs.readFile(path.resolve(filePath), "utf8");
 
-    const code = await fs.readFile(path.resolve(filePath), 'utf8');
-
-    const renderedModule =  await renderingFile(code);
+    const renderedModule = await renderingFile(code);
     return renderedModule;
   } catch (error) {
     console.error(`Error loading file for renderESM: ${error}`);
     throw error;
   }
 };
-
 
 const renderComponentFromTSX = (esm: typeof esbuild) => async (path: string) =>
   new TextDecoder("utf-8").decode(

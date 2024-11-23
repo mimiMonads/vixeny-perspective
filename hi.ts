@@ -6,30 +6,27 @@
 //   }).js.code,
 // );
 
-
-import esbuild from 'esbuild';
-import {cwd} from 'node:process'
-import fs from 'node:fs/promises';
-import path from 'node:path';
-
+import esbuild from "esbuild";
+import { cwd } from "node:process";
+import fs from "node:fs/promises";
+import path from "node:path";
 
 const compileToESM = async (code: string) => {
   const result = await esbuild.build({
     stdin: {
       contents: code,
       resolveDir: cwd(),
-      loader: 'tsx',
+      loader: "tsx",
     },
     bundle: true,
     write: false,
-    target: 'es2015',
-    platform: 'browser', 
-    format: 'esm',
-    external: ['react', 'react-dom'],
+    target: "es2015",
+    platform: "browser",
+    format: "esm",
+    external: ["react", "react-dom"],
   });
   return result.outputFiles[0].text;
 };
-
 
 const createDataURL = (code: string) => {
   const encodedCode = encodeURIComponent(code);
@@ -43,15 +40,11 @@ const rendering = async (code: string) => {
   return module.default;
 };
 
-
-
-
 const loadFileForRenderESM = async (filePath: string) => {
   try {
+    const code = await fs.readFile(path.resolve(filePath), "utf8");
 
-    const code = await fs.readFile(path.resolve(filePath), 'utf8');
-
-    const renderedModule =  await rendering(code);
+    const renderedModule = await rendering(code);
     return renderedModule;
   } catch (error) {
     console.error(`Error loading file for renderESM: ${error}`);
@@ -59,10 +52,8 @@ const loadFileForRenderESM = async (filePath: string) => {
   }
 };
 
-
-
 (async () => {
   console.log(
-     await loadFileForRenderESM('./main.tsx')
+    await loadFileForRenderESM("./main.tsx"),
   );
 })();

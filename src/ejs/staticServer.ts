@@ -1,133 +1,161 @@
 import type * as ejsModule from "ejs";
 import type * as Vixeny from "vixeny";
-import type { plugingType } from "../../type";
+import type { pluginType } from "../../type.ts";
 
+// Define a type for a Petition, which is the return type of Vixeny.petitions.common
 type Petition = ReturnType<ReturnType<typeof Vixeny.petitions.common>>;
 
+// Define the options for the StaticServer
 type StaticServer = {
   preserveExtension?: boolean;
-  f: Petition;
+  petition: Petition;
 };
 
-const renderFileEJS = ( args : {
-  renderFile: typeof ejsModule.renderFile,
-  plugins: plugingType
+// Create unique symbols for plugin names to avoid naming collisions
+const symbolRenderFileEJS = Symbol("renderFileEJS");
+const defaultFileEJSSymbol = Symbol("defaultFileEJS");
+
+/**
+ * Creates a plugin to render EJS files using the provided renderFile function.
+ */
+const renderFileEJS = (args: {
+  renderFile: typeof ejsModule.renderFile;
+  plugins: pluginType;
 }) => {
- const { renderFile , plugins} = args
+  const { renderFile, plugins } = args;
 
- const symbol = Symbol('renderFileEJS')
+  return plugins.type({
+    name: symbolRenderFileEJS,
+    isFunction: true,
+    isAsync: true,
+    type: {} as ejsModule.Options,
+    f: async (ctx) => {
+      const currentName = ctx.currentName(symbolRenderFileEJS);
+      const currentPetition = ctx.getPetition();
+      const globalOptions = ctx.getGlobalOptions();
 
- return plugins.type({
-  name: symbol,
-  isFunction: true,
-  isAsync: true,
-  type: {} as ejsModule.Options,
-  f: async (ctx) => {
+      if (typeof globalOptions.cyclePlugin[symbolRenderFileEJS] !== "object") {
+        throw new Error(
+          "This plugin was designed to work with this app. Open a PR if you need a custom one.",
+        );
+      }
 
-    const name = ctx.currentName(symbol)
-    const petition = ctx.getPetition()
-    const path = petition.path.endsWith('.ejs')
-      ? petition.path
-      :  petition.path + '.ejs'
+      // Retrieve options from Global Options, possible because of `ejsStaticServerPlugin`
+      const optionsFromGO = globalOptions.cyclePlugin[symbolRenderFileEJS];
+      const path = optionsFromGO.path as string;
 
-    const options = ctx.getOptionsFromPetition<ejsModule.Options>(
-      petition
-    )(name) ?? {}
+      // Retrieve options from the current petition
+      const currentOptions = ctx.getOptionsFromPetition<ejsModule.Options>(
+        currentPetition,
+      )(currentName) ?? {};
 
-    return    async (data: ejsModule.Data) =>  await renderFile(path,data,options)
-  }
- })
+      return async (data: ejsModule.Data | void) =>
+        await renderFile(path, data ?? {}, currentOptions);
+    },
+  });
 };
 
-const defaultFileEJS = ( args : {
-  renderFile: typeof ejsModule.renderFile,
-  defaults?: ejsModule.Data,
-  plugins: plugingType
+/**
+ * Creates a plugin to render default EJS files with optional default data.
+ */
+const defaultFileEJS = (args: {
+  renderFile: typeof ejsModule.renderFile;
+  defaults?: ejsModule.Data;
+  plugins: pluginType;
 }) => {
- const { renderFile , defaults , plugins} = args
+  const { renderFile, defaults, plugins } = args;
 
+  return plugins.type({
+    name: defaultFileEJSSymbol,
+    isFunction: false,
+    isAsync: true,
+    type: {} as ejsModule.Options,
+    f: async (ctx) => {
+      const currentName = ctx.currentName(symbolRenderFileEJS);
+      const currentPetition = ctx.getPetition();
+      const globalOptions = ctx.getGlobalOptions();
 
- const symbol = Symbol('defaultFileEJS')
+      if (typeof globalOptions.cyclePlugin[symbolRenderFileEJS] !== "object") {
+        throw new Error(
+          "This plugin was designed to work with this app. Open a PR if you need a custom one.",
+        );
+      }
 
- return plugins.type({
-  name: symbol,
-  isFunction: false,
-  isAsync: true,
-  type: {} as ejsModule.Options,
-  f: async (ctx) => {
+      // Retrieve options from Global Options
+      const optionsFromGO = globalOptions.cyclePlugin[symbolRenderFileEJS];
+      const path = optionsFromGO.path as string;
 
-    const name = ctx.currentName(symbol)
-    const petition = ctx.getPetition()
-    const path = petition.path.endsWith('.ejs')
-      ? petition.path
-      :  petition.path + '.ejs'
+      // Retrieve options from the current petition
+      const currentOptions = ctx.getOptionsFromPetition<ejsModule.Options>(
+        currentPetition,
+      )(currentName) ?? {};
 
-    const options = ctx.getOptionsFromPetition<ejsModule.Options>(
-      petition
-    )(name) ?? {}
+      const res = await renderFile(path, defaults, currentOptions);
 
-    let res:(string | Promise<string>) = await renderFile(path,defaults,options)
-
-     return async () =>  {
-
-
-        return res 
-     }
-  }
- })
+      return () => res;
+    },
+  });
 };
 
-
+/**
+ * Plugin to serve EJS files using Vixeny petitions.
+ */
 export const ejsStaticServePlugin =
-    (petition: typeof Vixeny.petitions) =>
-    (renderFile: typeof ejsModule.renderFile) =>
-    (defaults?: ejsModule.Data) =>
-    ( plugins: plugingType) =>
-       {
-      
-      const defaultEJS = defaultFileEJS({
-        renderFile,
-        defaults,
-        plugins
-      })
+  (petition: typeof Vixeny.petitions) =>
+  (renderFile: typeof ejsModule.renderFile) =>
+  (defaults?: ejsModule.Data) =>
+  (plugins: pluginType) => {
+    const defaultEJS = defaultFileEJS({
+      renderFile,
+      defaults,
+      plugins,
+    });
 
-      const renderEJS = renderFileEJS({
-        renderFile,
-        plugins
-      })
+    const renderEJS = renderFileEJS({
+      renderFile,
+      plugins,
+    });
 
-      return petition.sealableAdd({
-        cyclePlugin:{
-          defaultEJS,
-          renderEJS
-        }
-      })
-    };
+    return petition.sealableAdd({
+      cyclePlugin: {
+        defaultEJS,
+        renderEJS,
+      },
+    });
+  };
 
-
-
-
-export const ejsStaticServerPlugin = (obj: {
-
+/**
+ * Plugin to handle serving static EJS files.
+ */
+export const ejsStaticServerPlugin = ({
+  plugins,
+  options,
+}: {
   plugins: typeof Vixeny.plugins;
   options: StaticServer;
 }) => {
-  const {  plugins, options } = obj;
-
   return plugins.staticFilePlugin({
     type: "add",
     checker: (ctx) => ctx.path.includes(".ejs"),
-    p: (ob) => 
-      (
-        {
-          lazy: true,
-          ...options.f,
-          path: options && "preserveExtension" in options &&
-              !options.preserveExtension
-            ? ob.relativeName.slice(0, -4)
-            : ob.relativeName,
-
-        } 
-      ),
+    p: (file) => ({
+      ...options.petition,
+      // Lazy loading by default
+      lazy: true,
+      // Safely passing the context to the plugin
+      o: {
+        ...options.petition.o ?? {},
+        cyclePlugin: {
+          ...options.petition.o?.cyclePlugin,
+          [defaultFileEJSSymbol]: file,
+          [symbolRenderFileEJS]: file,
+        },
+      },
+      // Determine the router path
+      path: options &&
+          "preserveExtension" in options &&
+          !options.preserveExtension
+        ? file.relativeName.slice(0, -4) // Remove the '.ejs' extension
+        : file.relativeName,
+    }),
   });
 };

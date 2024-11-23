@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@types/ejs": "^3.1.5",
-    "vixeny": "0.1.50"
+    "vixeny": "0.1.51"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
