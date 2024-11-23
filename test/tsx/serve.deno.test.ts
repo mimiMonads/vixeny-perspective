@@ -1,25 +1,36 @@
 import { petitions, plugins, vixeny } from "vixeny";
-
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
-import { tsxStaticServer } from "../../src/tsx/staticServe.ts";
+import { tsxStaticServerPlugin , tsxStaticServePlugin } from "../../src/tsx/staticServe.ts";
 
-import * as Dom from "react-dom/server";
+import * as ReactDOMServer from "react-dom/server";
 import * as React from "react";
-import * as esbuild from "esbuild";
 
-const serve = vixeny()([
+const plugin = tsxStaticServePlugin({
+  petitions,
+  React,
+  ReactDOMServer,
+  plugins,
+  root: Deno.cwd()
+})
+
+const petition = plugin()({
+  f: ({ defaultTSX }) => defaultTSX
+})
+
+const serve = await vixeny()([
   {
     type: "fileServer",
     name: "/",
     path: "./public/tsx",
     template: [
-      //@ts-ignore
-      tsxStaticServer({
-        Dom,
-        React,
-        esbuild,
+
+      tsxStaticServerPlugin({
         plugins,
-        petitions,
+        options: {
+          petition,
+          root: '',
+          preserveExtension: false
+        },
       }),
     ],
   },

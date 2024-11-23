@@ -1,171 +1,191 @@
-import * as esbuild from "esbuild";
-import type * as React from "react";
-import type * as Dom from "react-dom/server";
+import type * as ReactModule from "react";
+import type * as ReactDOMServer from "react-dom/server";
+import path from "node:path";
 import type * as Vixeny from "vixeny";
+import type { pluginType } from "../../type.ts";
 
+// Define a type for a Petition, which is the return type of Vixeny.petitions.common
 type Petition = ReturnType<ReturnType<typeof Vixeny.petitions.common>>;
 
-type petitionType = (r: Request) => Record<string, unknown> | null;
-
+// Define the options for the StaticServer
 type StaticServer = {
+  root: string;
   preserveExtension?: boolean;
-  default?: Record<string, unknown>;
-  thisGlobalOptions?: ReturnType<typeof Vixeny.plugins.globalOptions>;
-  globalF?: petitionType;
-  f?: Petition;
+  petition: Petition;
 };
 
-import { cwd } from "node:process";
-import fs from "node:fs/promises";
-import path from "node:path";
+type Props = { [data: string]: any } | void;
 
-const compileToESM = async (code: string) => {
-  const result = await esbuild.build({
-    stdin: {
-      contents: code,
-      resolveDir: cwd(),
-      loader: "tsx",
-    },
-    bundle: true,
-    write: false,
-    target: "es2015",
-    platform: "browser",
-    format: "esm",
-    external: ["react", "react-dom"],
-  });
-  return result.outputFiles[0].text;
+type ReactUsedType = {
+  createElement: typeof ReactModule.createElement;
+  [key: string | number | symbol]: any;
 };
 
-const createDataURL = (code: string) => {
-  const encodedCode = encodeURIComponent(code);
-  return `data:text/javascript;charset=utf-8,${encodedCode}`;
-};
+// Create unique symbols for plugin names to avoid naming collisions
+const symbolRenderFileTSX = Symbol("renderFileTSX");
+const defaultFileTSXSymbol = Symbol("defaultFileTSX");
 
-const renderingFile = async (code: string) => {
-  const compiledCode = await compileToESM(code);
-  const dataURL = createDataURL(compiledCode);
-  const module = await import(/* webpackIgnore: true */ dataURL);
-  return module.default;
-};
-
-const loadFileForRenderESM = async (filePath: string) => {
-  try {
-    const code = await fs.readFile(path.resolve(filePath), "utf8");
-
-    const renderedModule = await renderingFile(code);
-    return renderedModule;
-  } catch (error) {
-    console.error(`Error loading file for renderESM: ${error}`);
-    throw error;
-  }
-};
-
-const renderComponentFromTSX = (esm: typeof esbuild) => async (path: string) =>
-  new TextDecoder("utf-8").decode(
-    (await esm.build({
-      entryPoints: [path],
-      bundle: true,
-      write: false,
-      platform: "browser",
-      format: "cjs",
-      loader: { ".tsx": "tsx", ".jsx": "jsx" },
-    })).outputFiles[0].contents,
-  );
-
-const rendering =
-  (esm: typeof esbuild) =>
-  (ReactModule: typeof React) =>
-  async (path: string) =>
-    new Function(
-      "React",
-      "module",
-      `${await renderComponentFromTSX(esm)(
-        path,
-      )}; return module.exports;`,
-    )(ReactModule, { exports: {} }).default;
-
-const onPetition =
-  (esm: typeof esbuild) =>
-  (DomModule: typeof Dom) =>
-  (ReactModule: typeof React) =>
-  (f: petitionType) =>
-  (path: string) =>
-    ((element: any) =>
-    (component: any) =>
-    (def: string | null) =>
-    async (headers: Record<string, string>) =>
-      def === null
-        ? new Response(
-          def = DomModule.renderToString(
-            component = ReactModule.createElement(
-              element = await rendering(esm)(ReactModule)(path),
-            ),
-          ),
-          {
-            headers: headers,
-          },
-        )
-        : new Response(
-          def,
-          {
-            headers: headers,
-          },
-        ))(null)(null)(null);
-
-const onProduction =
-  (esm: typeof esbuild) =>
-  (DomModule: typeof Dom) =>
-  (ReactModule: typeof React) =>
-  (path: string) =>
-    ((element: any) =>
-    (component: any) =>
-    (def: string | null) =>
-    async (headers: Record<string, string>) =>
-      def === null
-        ? new Response(
-          def = DomModule.renderToString(
-            component = ReactModule.createElement(
-              element = await rendering(esm)(ReactModule)(path),
-            ),
-          ),
-          {
-            headers: headers,
-          },
-        )
-        : new Response(
-          def,
-          {
-            headers: headers,
-          },
-        ))(null)(null)(null);
-
-export const tsxStaticServer = (args: {
-  Dom: typeof Dom;
-  React: typeof React;
-  esbuild: typeof esbuild;
-  options: StaticServer;
-  plugins: typeof Vixeny.plugins;
-  petitions: typeof Vixeny.petitions;
+/**
+ * Creates a plugin to render TSX files using React and ReactDOMServer.
+ */
+const renderFileTSX = (args: {
+  createElement: typeof ReactModule.createElement;
+  ReactDOMServer: typeof ReactDOMServer;
+  root: string;
+  plugins: pluginType;
 }) => {
-  const { Dom, React, esbuild, options, petitions, plugins } = args;
-  return plugins.staticFilePlugin(
-    {
-      checker: (ctx) => ctx.path.endsWith(".tsx"),
-      p: (ob) =>
-        petitions.custom(options?.thisGlobalOptions)({
-          path: ob.relativeName.slice(0, -4),
-          // Headings
-          headings: {
-            headers: ".html",
-          },
-          // Only
-          options: {
-            only: ["headers"],
-          },
-          f: ((fun) => ({ headers }) => fun(headers))(
-            onProduction(esbuild)(Dom)(React)(ob.path),
-          ),
-        }),
+  const { createElement, ReactDOMServer, root, plugins, } = args;
+
+  return plugins.type({
+    name: symbolRenderFileTSX,
+    isFunction: true,
+    isAsync: true,
+    type: {} as Props,
+    f: async (ctx) => {
+      const currentName = ctx.currentName(symbolRenderFileTSX);
+      const currentPetition = ctx.getPetition();
+      const globalOptions = ctx.getGlobalOptions();
+
+      if (typeof globalOptions.cyclePlugin[symbolRenderFileTSX] !== "object") {
+        throw new Error(
+          "This plugin was designed to work with this app. Open a PR if you need a custom one."
+        );
+      }
+
+      // Retrieve options from Global Options
+      const optionsFromGO = globalOptions.cyclePlugin[symbolRenderFileTSX];
+      const componentPath = optionsFromGO.path as string;
+
+      const modulePath = path.join(root, componentPath);
+
+      // Use the rendering function to compile and load the component
+      //@ts-ignore
+      const Component = await import(modulePath).default;
+
+      return (data: Props) => {
+        const element = createElement(Component, data ?? null);
+        return ReactDOMServer.renderToString(element);
+      };
     },
-  );
+  });
+};
+
+/**
+ * Creates a plugin to render default TSX files.
+ */
+const defaultFileTSX = (args: {
+  createElement: typeof ReactModule.createElement;
+  ReactDOMServer: typeof ReactDOMServer;
+  root: string;
+  plugins: pluginType;
+}) => {
+  const { createElement, ReactDOMServer, root, plugins } = args;
+
+  return plugins.type({
+    name: defaultFileTSXSymbol,
+    isFunction: false,
+    isAsync: true,
+    type: {},
+    f: async (ctx) => {
+      const currentName = ctx.currentName(symbolRenderFileTSX);
+      const currentPetition = ctx.getPetition();
+      const globalOptions = ctx.getGlobalOptions();
+
+      if (typeof globalOptions.cyclePlugin[symbolRenderFileTSX] !== "object") {
+        throw new Error(
+          "This plugin was designed to work with this app. Open a PR if you need a custom one."
+        );
+      }
+
+      // Retrieve options from Global Options
+      const optionsFromGO = globalOptions.cyclePlugin[symbolRenderFileTSX];
+      const componentPath = optionsFromGO.path as string;
+
+      const modulePath = path.join(root, componentPath);
+
+      // Use the rendering function to compile and load the component
+
+      //@ts-ignore
+      const Component = (await import(modulePath)).default ;
+
+      // Create a React element and render it to HTML
+      const element = createElement(Component);
+      const html = ReactDOMServer.renderToString(element);
+
+      return () => html;
+    },
+  });
+};
+
+/**
+ * Plugin to serve TSX files using Vixeny petitions.
+ */
+export const tsxStaticServePlugin = (arg: {
+  petitions: typeof Vixeny.petitions;
+  React: ReactUsedType;
+  ReactDOMServer: typeof ReactDOMServer;
+  root: string;
+  plugins: pluginType;
+}) => {
+  const {
+    React: { createElement },
+    ReactDOMServer,
+    root,
+    plugins,
+    petitions,
+  } = arg;
+
+  return petitions.sealableAdd({
+    cyclePlugin: {
+      renderTSX: renderFileTSX({
+        createElement,
+        ReactDOMServer,
+        root,
+        plugins,
+      }),
+      defaultTSX: defaultFileTSX({
+        createElement,
+        ReactDOMServer,
+        root,
+        plugins,
+      }),
+    },
+  });
+};
+
+/**
+ * Plugin to handle serving static TSX files.
+ */
+export const tsxStaticServerPlugin = ({
+  plugins,
+  options,
+}: {
+  plugins: typeof Vixeny.plugins;
+  options: StaticServer;
+}) => {
+  return plugins.staticFilePlugin({
+    type: "add",
+    checker: (ctx) => ctx.path.endsWith(".tsx"),
+    p: (file) => ({
+      ...options.petition,
+      // Lazy loading by default
+      lazy: true,
+      // Safely passing the context to the plugin
+      o: {
+        ...options.petition.o ?? {},
+        cyclePlugin: {
+          ...options.petition.o?.cyclePlugin,
+          [defaultFileTSXSymbol]: file,
+          [symbolRenderFileTSX]: file,
+        },
+      },
+      // Determine the router path
+      path:
+        options &&
+        "preserveExtension" in options &&
+        !options.preserveExtension
+          ? file.relativeName.slice(0, -4) // Remove the '.tsx' extension
+          : file.relativeName,
+    }),
+  });
 };

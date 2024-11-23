@@ -5,13 +5,13 @@ import { sassStaticServer } from "./src/sass/staticServer.ts";
 import { postcssStaticServer } from "./src/postcss/staticServer.ts";
 import { typescriptStaticServer } from "./src/typescript/staticServe.ts";
 import { tsxStaticServer } from "./src/tsx/staticServe.ts";
-import { jsxStaticServer } from "./src/jsx/staticServe.ts";
+import { jsxStaticServerPlugin } from "./src/jsx/staticServe.ts";
 import { injectable, serve } from "./ws/mainServe.ts";
 
 export {
   ejsStaticServerPlugin,
   injectable,
-  jsxStaticServer,
+  jsxStaticServerPlugin,
   postcssStaticServer,
   pugStaticServerPlugin,
   remarkStaticServer,
