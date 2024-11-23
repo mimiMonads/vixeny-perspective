@@ -1,107 +1,166 @@
+import type * as pugModule from "pug";
 import type * as Vixeny from "vixeny";
-import * as pugModule from "pug";
+import type { pluginType } from "../../type.ts";
 
+// Define a type for a Petition, which is the return type of Vixeny.petitions.common
 type Petition = ReturnType<ReturnType<typeof Vixeny.petitions.common>>;
 
-type petitionType = (r: Request) => pugModule.LocalsObject | null;
-
+// Define the options for the StaticServer
 type StaticServer = {
   preserveExtension?: boolean;
-  default?: pugModule.LocalsObject;
-  thisGlobalOptions?: ReturnType<typeof Vixeny.plugins.globalOptions>;
-  globalF?: petitionType;
-  f?: Petition;
+  petition: Petition;
 };
 
-const onLazy =
-  (compileFile: typeof pugModule.compileFile) =>
-  (defaults?: pugModule.LocalsObject) =>
-  (path: string) =>
-    (
-      (template) =>
-        // def means default
-        ((def) => (h: Record<string, string>) =>
-          new Response(def, {
-            headers: h,
-          }))(
-            template(defaults || {}),
-          )
-    )(
-      compileFile(path),
-    );
+// Create unique symbols for plugin names to avoid naming collisions
+const  symbolRenderFilePug = Symbol('renderFilePug');
+const defaultFilePugSymbol = Symbol('defaultFilePug');
 
-const onPetition =
-  (petition: petitionType) =>
-  (compileFile: typeof pugModule.compileFile) =>
-  (defaults?: pugModule.LocalsObject) =>
-  (path: string) =>
-    (
-      (template) =>
-        // def means default
-        ((def) => (r: Request) => (h: Record<string, string>) => {
-          try {
-            // Getting the petition
-            const maybeOfObj = petition(r);
-
-            // Returning the template
-            return new Response(
-              maybeOfObj === null ? def : template(maybeOfObj),
-              {
-                headers: h,
-              },
-            );
-          } catch (e: unknown) {
-            if (e instanceof Response) {
-              return e;
-            }
-
-            return new Response(null, {
-              status: 500,
-            });
-          }
-        })(
-          template(defaults || {}),
-        )
-    )(
-      compileFile(path),
-    );
-
-export const pugStaticServerPlugin = (arg: {
+/**
+ * Creates a plugin to render Pug files using the provided compileFile function.
+ */
+const renderFilePug = (args: {
   compileFile: typeof pugModule.compileFile;
-  option?: StaticServer;
-  plugins: typeof Vixeny.plugins;
-  petitions: typeof Vixeny.petitions;
+  plugins: pluginType;
 }) => {
-  const { compileFile, option, plugins, petitions } = arg;
+  const { compileFile, plugins } = args;
 
+  return plugins.type({
+    name: symbolRenderFilePug,
+    isFunction: true,
+    isAsync: false,
+    type: {} as pugModule.Options,
+    f:  (ctx) => {
+      const currentName = ctx.currentName(symbolRenderFilePug);
+      const currentPetition = ctx.getPetition();
+      const globalOptions = ctx.getGlobalOptions();
+
+      if (typeof globalOptions.cyclePlugin[symbolRenderFilePug] !== 'object')
+        throw new Error(
+          'This plugin was designed to work with this app. Open a PR if you need a custom one.'
+        );
+
+      // Retrieve options from Global Options
+      const optionsFromGO = globalOptions.cyclePlugin[symbolRenderFilePug];
+      const path = optionsFromGO.path as string;
+
+      // Retrieve options from the current petition
+      const currentOptions = ctx.getOptionsFromPetition<pugModule.Options>(
+        currentPetition
+      )(currentName) ?? {};
+
+      const template = compileFile(path, currentOptions);
+
+      return (data: pugModule.LocalsObject | void) =>  template(data ?? {});
+      ;
+    },
+  });
+};
+
+/**
+ * Creates a plugin to render default Pug files with optional default data.
+ */
+const defaultFilePug = (args: {
+  compileFile: typeof pugModule.compileFile;
+  defaults?: pugModule.LocalsObject;
+  plugins: pluginType;
+}) => {
+  const { compileFile, defaults, plugins } = args;
+
+  return plugins.type({
+    name: defaultFilePugSymbol,
+    isFunction: false,
+    isAsync: false,
+    type: {} as pugModule.Options,
+    f:  (ctx) => {
+      const currentName = ctx.currentName(symbolRenderFilePug);
+      const currentPetition = ctx.getPetition();
+      const globalOptions = ctx.getGlobalOptions();
+
+      if (typeof globalOptions.cyclePlugin[symbolRenderFilePug] !== 'object')
+        throw new Error(
+          'This plugin was designed to work with this app. Open a PR if you need a custom one.'
+        );
+
+      // Retrieve options from Global Options
+      const optionsFromGO = globalOptions.cyclePlugin[symbolRenderFilePug];
+      const path = optionsFromGO.path as string;
+
+      // Retrieve options from the current petition
+      const currentOptions = ctx.getOptionsFromPetition<pugModule.Options>(
+        currentPetition
+      )(currentName) ?? {};
+
+      const template = compileFile(path, currentOptions);
+      const res = template(defaults ?? {});
+
+      return () => res;
+    },
+  });
+};
+
+/**
+ * Plugin to serve Pug files using Vixeny petitions.
+ */
+export const pugStaticServePlugin =
+  (petition: typeof Vixeny.petitions) =>
+  (compileFile: typeof pugModule.compileFile) =>
+  (defaults?: pugModule.LocalsObject) =>
+  (plugins: pluginType) => {
+    const defaultPug = defaultFilePug({
+      compileFile,
+      defaults,
+      plugins,
+    });
+
+    const renderPug = renderFilePug({
+      compileFile,
+      plugins,
+    });
+
+    return petition.sealableAdd({
+      cyclePlugin: {
+        defaultPug,
+        renderPug,
+      },
+    });
+  };
+
+/**
+ * Plugin to handle serving static Pug files.
+ */
+export const pugStaticServerPlugin = ({
+  plugins,
+  options,
+}: {
+  plugins: typeof Vixeny.plugins;
+  options: StaticServer;
+}) => {
   return plugins.staticFilePlugin({
     type: "add",
     checker: (ctx) => ctx.path.includes(".pug"),
-    p: (ob) =>
-      petitions.custom(option?.thisGlobalOptions)(
-        {
-          path: option && "preserveExtension" in option &&
-              !option.preserveExtension
-            ? ob.relativeName.slice(0, -4)
-            : ob.relativeName,
-          // Headings
-          headings: {
-            headers: ".html",
-          },
-          // Only
-          options: {
-            add: ["headers", "req"],
-          },
-          f: option && option.globalF
-            ? ((fun) => ({ headers, req }) => fun(req)(headers))(
-              onPetition(option.globalF)(compileFile)(option?.default)(
-                ob.path,
-              ),
-            )
-            : ((fun) => ({ headers }) => fun(headers))(
-              onLazy(compileFile)(option?.default)(ob.path),
-            ),
+    p: (file) => 
+
+       ({
+      ...options.petition,
+      // Lazy loading by default
+      // lazy: true,
+      // Safely passing the context to the plugin
+      o: {
+        ...options.petition.o ?? {},
+        cyclePlugin: {
+          ...options.petition.o?.cyclePlugin,
+          [defaultFilePugSymbol]: file,
+          [symbolRenderFilePug]: file,
         },
-      ),
+      },
+      // Determine the router path
+      path:
+        options &&
+        "preserveExtension" in options &&
+        !options.preserveExtension
+          ? file.relativeName.slice(0, -4) // Remove the '.pug' extension
+          : file.relativeName,
+    }) 
+    
   });
 };
