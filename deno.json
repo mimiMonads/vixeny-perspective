@@ -14,8 +14,8 @@
     "autoprefixer": "npm:autoprefixer@10.4.17",
     "sass": "npm:sass@1.71.0",
     "esbuild": "npm:esbuild@0.20.1",
-    "react": "https://esm.run/react",
-    "react-dom/server": "https://esm.run/react-dom/server",
+    "react": "npm:react@18.2.0",
+    "react-dom/server": "npm:react-dom@18.2.0/server",
     "cwd": "npm:process@0.11.10"
   }
 }
