@@ -12,11 +12,12 @@ import remarkRehype from "remark-rehype";
 const pro = unified()
   .use(remarkParse as unknown as PluginTuple)
   .use(remarkRehype)
+  // @ts-ignore
   .use(rehypeDocument, { title: "👋🌍" })
   .use(rehypeFormat)
   .use(rehypeStringify as unknown as PluginTuple);
 
-const serve = vixeny()([
+const serve = await vixeny()([
   {
     type: "fileServer",
     name: "/",
@@ -28,6 +29,7 @@ const serve = vixeny()([
         petitions,
         options: {
           uses: [
+            // @ts-ignore
             [remarkParse] as PluginTuple,
             [remarkRehype] as unknown as PluginTuple,
             [rehypeDocument, { title: "👋🌍" }] as unknown as PluginTuple,

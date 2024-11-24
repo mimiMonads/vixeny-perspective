@@ -3,7 +3,7 @@ import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { sassStaticServer } from "../../src/sass/staticServer.ts";
 import * as sass from "sass";
 
-const serve = vixeny()([
+const serve = await vixeny()([
   {
     type: "fileServer",
     name: "/",

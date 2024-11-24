@@ -1,6 +1,9 @@
 import { petitions, plugins, vixeny } from "vixeny";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
-import { tsxStaticServerPlugin , tsxStaticServePlugin } from "../../src/tsx/staticServe.ts";
+import {
+  tsxStaticServePlugin,
+  tsxStaticServerPlugin,
+} from "../../src/tsx/staticServe.ts";
 
 import * as ReactDOMServer from "react-dom/server";
 import * as React from "react";
@@ -10,12 +13,12 @@ const plugin = tsxStaticServePlugin({
   React,
   ReactDOMServer,
   plugins,
-  root: Deno.cwd()
-})
+  root: Deno.cwd(),
+});
 
 const petition = plugin()({
-  f: ({ defaultTSX }) => defaultTSX
-})
+  f: ({ defaultTSX }) => defaultTSX,
+});
 
 const serve = await vixeny()([
   {
@@ -23,13 +26,12 @@ const serve = await vixeny()([
     name: "/",
     path: "./public/tsx",
     template: [
-
       tsxStaticServerPlugin({
         plugins,
         options: {
           petition,
-          root: '',
-          preserveExtension: false
+          root: "",
+          preserveExtension: false,
         },
       }),
     ],

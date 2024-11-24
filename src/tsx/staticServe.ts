@@ -34,7 +34,7 @@ const renderFileTSX = (args: {
   root: string;
   plugins: pluginType;
 }) => {
-  const { createElement, ReactDOMServer, root, plugins, } = args;
+  const { createElement, ReactDOMServer, root, plugins } = args;
 
   return plugins.type({
     name: symbolRenderFileTSX,
@@ -48,7 +48,7 @@ const renderFileTSX = (args: {
 
       if (typeof globalOptions.cyclePlugin[symbolRenderFileTSX] !== "object") {
         throw new Error(
-          "This plugin was designed to work with this app. Open a PR if you need a custom one."
+          "This plugin was designed to work with this app. Open a PR if you need a custom one.",
         );
       }
 
@@ -93,7 +93,7 @@ const defaultFileTSX = (args: {
 
       if (typeof globalOptions.cyclePlugin[symbolRenderFileTSX] !== "object") {
         throw new Error(
-          "This plugin was designed to work with this app. Open a PR if you need a custom one."
+          "This plugin was designed to work with this app. Open a PR if you need a custom one.",
         );
       }
 
@@ -106,7 +106,7 @@ const defaultFileTSX = (args: {
       // Use the rendering function to compile and load the component
 
       //@ts-ignore
-      const Component = (await import(modulePath)).default ;
+      const Component = (await import(modulePath)).default;
 
       // Create a React element and render it to HTML
       const element = createElement(Component);
@@ -180,12 +180,11 @@ export const tsxStaticServerPlugin = ({
         },
       },
       // Determine the router path
-      path:
-        options &&
-        "preserveExtension" in options &&
-        !options.preserveExtension
-          ? file.relativeName.slice(0, -4) // Remove the '.tsx' extension
-          : file.relativeName,
+      path: options &&
+          "preserveExtension" in options &&
+          !options.preserveExtension
+        ? file.relativeName.slice(0, -4) // Remove the '.tsx' extension
+        : file.relativeName,
     }),
   });
 };

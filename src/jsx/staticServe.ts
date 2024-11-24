@@ -14,12 +14,12 @@ type StaticServer = {
   petition: Petition;
 };
 
-type  Props = { [data: string]: any} | void
+type Props = { [data: string]: any } | void;
 
-type ReactUsedType =  {
+type ReactUsedType = {
   createElement: typeof ReactNative.createElement;
-  [key: string | number | number]: any
-}
+  [key: string | number | number]: any;
+};
 
 // Create unique symbols for plugin names to avoid naming collisions
 const symbolRenderFileJSX = Symbol("renderFileJSX");
@@ -66,8 +66,8 @@ const renderFileJSX = (args: {
       const componentModule = await import(modulePath);
       const Component = componentModule.default;
 
-      return  (data: Props ) => {
-        const element = createElement(Component , data ?? null);
+      return (data: Props) => {
+        const element = createElement(Component, data ?? null);
         return ReactDOMServer.renderToString(element);
       };
     },
@@ -111,17 +111,16 @@ const defaultFileJSX = (args: {
       const currentOptions =
         ctx.getOptionsFromPetition(currentPetition)(currentName) ?? {};
 
-     
-        // Dynamically import the JSX component
-        const modulePath = path.join(root, componentPath);
-        const componentModule = await import(modulePath);
-        const Component = componentModule.default;
+      // Dynamically import the JSX component
+      const modulePath = path.join(root, componentPath);
+      const componentModule = await import(modulePath);
+      const Component = componentModule.default;
 
-        // Create a React element and render it to HTML
-        const element = createElement(Component);
-        const html = ReactDOMServer.renderToString(element);
+      // Create a React element and render it to HTML
+      const element = createElement(Component);
+      const html = ReactDOMServer.renderToString(element);
 
-        return () => html 
+      return () => html;
     },
   });
 };
@@ -137,25 +136,25 @@ export const jsxStaticServePlugin = (arg: {
   root: string;
   plugins: pluginType;
 }) => {
-  const { React: { createElement}, ReactDOMServer, root, plugins, petitions } = arg;
+  const { React: { createElement }, ReactDOMServer, root, plugins, petitions } =
+    arg;
 
   return petitions.sealableAdd({
     cyclePlugin: {
-      renderJSX : renderFileJSX({
+      renderJSX: renderFileJSX({
         createElement,
         ReactDOMServer,
         root,
         plugins,
       }),
-      defaultJSX : defaultFileJSX({
+      defaultJSX: defaultFileJSX({
         createElement,
         ReactDOMServer,
         root,
         plugins,
-      })
+      }),
     },
   });
-  
 };
 
 /**

@@ -5,7 +5,7 @@ import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { postcssStaticServer } from "../../src/postcss/staticServer.ts";
 import postcss from "postcss";
 
-const serve = vixeny()([
+const serve = await vixeny()([
   {
     type: "fileServer",
     name: "/",

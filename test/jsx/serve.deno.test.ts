@@ -1,16 +1,18 @@
 import { petitions, plugins, vixeny } from "vixeny";
 
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
-import { jsxStaticServePlugin , jsxStaticServerPlugin } from "../../src/jsx/staticServe.ts";
+import {
+  jsxStaticServePlugin,
+  jsxStaticServerPlugin,
+} from "../../src/jsx/staticServe.ts";
 
-import  * as React from "https://esm.sh/react";
-import  * as ReactDOMServer from "react-dom/server";
-
+import * as React from "https://esm.sh/react";
+import * as ReactDOMServer from "react-dom/server";
 
 // Simulating process.cwd() for Deno
-const root =  Deno.cwd();
+const root = Deno.cwd();
 
-console.log(root)
+console.log(root);
 
 const plugin = jsxStaticServePlugin({
   ReactDOMServer,
@@ -55,7 +57,9 @@ const normalize = (s: string) =>
 
 Deno.test("compile", async () => {
   const response = await serve(new Request("http://localhost:8080/main"));
-  const responseWithQuery = await serve(new Request("http://localhost:8080/main?message=hi"));
+  const responseWithQuery = await serve(
+    new Request("http://localhost:8080/main?message=hi"),
+  );
 
   const text = normalize(await response.text());
   const customText = normalize(await responseWithQuery.text());

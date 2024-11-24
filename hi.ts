@@ -7,18 +7,18 @@
 // );
 
 import type * as esbuild from "esbuild";
-import  * as otherValue from "esbuild";
+import * as otherValue from "esbuild";
 import { cwd } from "node:process";
 import fs from "node:fs/promises";
 import path from "node:path";
 
 type FromEsBuild = {
-  code : string;
-  es : typeof esbuild
-}
+  code: string;
+  es: typeof esbuild;
+};
 
-const compileToESM = async ( args : FromEsBuild) => {
-const {es , code} = args
+const compileToESM = async (args: FromEsBuild) => {
+  const { es, code } = args;
   const result = await es.build({
     stdin: {
       contents: code,
@@ -47,10 +47,15 @@ const rendering = async (arg: FromEsBuild) => {
   return module.default;
 };
 
-const loadFileForRenderESM = async (args :{filePath: string , es: typeof esbuild , cwd?: string}) => {
-  const { filePath , es } = args
+const loadFileForRenderESM = async (
+  args: { filePath: string; es: typeof esbuild; cwd?: string },
+) => {
+  const { filePath, es } = args;
   try {
-    const code = await fs.readFile(path.resolve(args.cwd ?? '' ,filePath), "utf8");
+    const code = await fs.readFile(
+      path.resolve(args.cwd ?? "", filePath),
+      "utf8",
+    );
 
     const renderedModule = await import(filePath);
     return renderedModule;
@@ -64,7 +69,7 @@ const loadFileForRenderESM = async (args :{filePath: string , es: typeof esbuild
   console.log(
     await loadFileForRenderESM({
       filePath: "./public/tsx/main.tsx",
-      es: otherValue
+      es: otherValue,
     }),
   );
 })();
