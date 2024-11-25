@@ -100,29 +100,31 @@ const defaultFileEJS = (args: {
 /**
  * Plugin to serve EJS files using Vixeny petitions.
  */
-export const ejsStaticServePlugin =
-  (petition: typeof Vixeny.petitions) =>
-  (renderFile: typeof ejsModule.renderFile) =>
-  (defaults?: ejsModule.Data) =>
-  (plugins: pluginType) => {
-    const defaultEJS = defaultFileEJS({
-      renderFile,
-      defaults,
-      plugins,
-    });
+export const ejsToPetition = (args: {
+  petitions: typeof Vixeny.petitions;
+  renderFile: typeof ejsModule.renderFile;
+  defaults?: ejsModule.Data;
+  plugins: pluginType;
+}) => {
+  const { renderFile, defaults, plugins, petitions } = args;
+  const defaultEJS = defaultFileEJS({
+    renderFile,
+    defaults,
+    plugins,
+  });
 
-    const renderEJS = renderFileEJS({
-      renderFile,
-      plugins,
-    });
+  const renderEJS = renderFileEJS({
+    renderFile,
+    plugins,
+  });
 
-    return petition.sealableAdd({
-      cyclePlugin: {
-        defaultEJS,
-        renderEJS,
-      },
-    });
-  };
+  return petitions.sealableAdd({
+    cyclePlugin: {
+      defaultEJS,
+      renderEJS,
+    },
+  });
+};
 
 /**
  * Plugin to handle serving static EJS files.

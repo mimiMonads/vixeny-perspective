@@ -1,5 +1,5 @@
 import { petitions, plugins, vixeny } from "vixeny";
-import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
+import { expect, test } from "bun:test";
 import { tsxStaticServerPlugin, tsxToPetition } from "../../main.ts";
 
 import * as ReactDOMServer from "react-dom/server";
@@ -10,7 +10,7 @@ const plugin = tsxToPetition({
   React,
   ReactDOMServer,
   plugins,
-  root: Deno.cwd(),
+  root: process.cwd(),
 });
 
 const petition = plugin()({
@@ -34,16 +34,16 @@ const serve = await vixeny()([
     ],
   },
 ]);
+
 const normalize = (s: string) =>
   s.replace(/(?<!`|\$\{.*)(["'])(?:(?=(\\?))\2.)*?\1/g, " ")
     .replace(/\s+/g, " ")
     .replace(/ +/g, " ");
 
-Deno.test("compile", async () => {
+test("compile", async () => {
   const response = await serve(new Request("http://localhost:8080/main"));
   const text = normalize(await response.text());
-  assertEquals(
-    text,
+  expect(text).toBe(
     "<div><h1>Welcome to my app</h1><button disabled= >I&#x27;m a disabled button</button></div>",
   );
 });

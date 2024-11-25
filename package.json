@@ -1,6 +1,6 @@
 {
   "name": "vixeny-perspective",
-  "version": "0.2.00",
+  "version": "0.4.0",
   "description": "Engine views for Vixeny",
   "main": "main.ts",
   "scripts": {

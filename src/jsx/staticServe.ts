@@ -129,7 +129,7 @@ const defaultFileJSX = (args: {
  * Plugin to serve JSX files using Vixeny petitions.
  */
 
-export const jsxStaticServePlugin = (arg: {
+export const jsxToPetition = (arg: {
   petitions: typeof Vixeny.petitions;
   React: ReactUsedType;
   ReactDOMServer: typeof ReactDOMServer;

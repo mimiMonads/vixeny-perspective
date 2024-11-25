@@ -1,8 +1,5 @@
 import { petitions, plugins, vixeny } from "vixeny";
-import {
-  ejsStaticServePlugin,
-  ejsStaticServerPlugin,
-} from "../../src/ejs/staticServer.ts";
+import { ejsStaticServerPlugin, ejsToPetition } from "../../main.ts";
 import { renderFile } from "ejs";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 const normalize = (s: string) =>
@@ -10,9 +7,11 @@ const normalize = (s: string) =>
     .replace(/\s+/g, " ")
     .replace(/ +/g, " ");
 
-const plugin = ejsStaticServePlugin(
+const plugin = ejsToPetition({
   petitions,
-)(renderFile)({})(plugins);
+  renderFile,
+  plugins,
+});
 
 const petition = plugin({})({
   f: async ({

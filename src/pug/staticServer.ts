@@ -102,29 +102,32 @@ const defaultFilePug = (args: {
 /**
  * Plugin to serve Pug files using Vixeny petitions.
  */
-export const pugStaticServePlugin =
-  (petition: typeof Vixeny.petitions) =>
-  (compileFile: typeof pugModule.compileFile) =>
-  (defaults?: pugModule.LocalsObject) =>
-  (plugins: pluginType) => {
-    const defaultPug = defaultFilePug({
-      compileFile,
-      defaults,
-      plugins,
-    });
+export const pugToPetition = (args: {
+  petitions: typeof Vixeny.petitions;
+  compileFile: typeof pugModule.compileFile;
+  defaults?: pugModule.LocalsObject;
+  plugins: pluginType;
+}) => {
+  const { compileFile, defaults, plugins, petitions } = args;
 
-    const renderPug = renderFilePug({
-      compileFile,
-      plugins,
-    });
+  const defaultPug = defaultFilePug({
+    compileFile,
+    defaults,
+    plugins,
+  });
 
-    return petition.sealableAdd({
-      cyclePlugin: {
-        defaultPug,
-        renderPug,
-      },
-    });
-  };
+  const renderPug = renderFilePug({
+    compileFile,
+    plugins,
+  });
+
+  return petitions.sealableAdd({
+    cyclePlugin: {
+      defaultPug,
+      renderPug,
+    },
+  });
+};
 
 /**
  * Plugin to handle serving static Pug files.

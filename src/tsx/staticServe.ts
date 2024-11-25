@@ -120,7 +120,7 @@ const defaultFileTSX = (args: {
 /**
  * Plugin to serve TSX files using Vixeny petitions.
  */
-export const tsxStaticServePlugin = (arg: {
+export const tsxToPetition = (arg: {
   petitions: typeof Vixeny.petitions;
   React: ReactUsedType;
   ReactDOMServer: typeof ReactDOMServer;

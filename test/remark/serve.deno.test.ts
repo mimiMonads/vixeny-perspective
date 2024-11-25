@@ -1,7 +1,7 @@
 import { petitions, plugins, vixeny } from "vixeny";
 import { type PluginTuple, unified } from "unified";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
-import { remarkStaticServer } from "../../src/remark/staticServer.ts";
+import { remarkStaticServer } from "../../main.ts";
 
 import rehypeDocument from "rehype-document";
 import rehypeFormat from "rehype-format";

@@ -1,13 +1,14 @@
 import { petitions, plugins, vixeny, wrap } from "vixeny";
 import { describe, expect, it } from "bun:test";
-import {
-  pugStaticServePlugin,
-  pugStaticServerPlugin,
-} from "../../src/pug/staticServer.ts";
+import { pugStaticServerPlugin, pugToPetition } from "../../main.ts";
 import { compileFile } from "pug";
 
 // Create the plugin
-const plugin = pugStaticServePlugin(petitions)(compileFile)({})(plugins);
+const plugin = pugToPetition({
+  petitions,
+  compileFile,
+  plugins,
+});
 
 const petition = plugin({})({
   f: ({

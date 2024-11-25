@@ -1,14 +1,11 @@
 import { petitions, plugins, vixeny } from "vixeny";
-import {
-  jsxStaticServePlugin,
-  jsxStaticServerPlugin,
-} from "../../src/jsx/staticServe.ts";
+import { jsxStaticServerPlugin, jsxToPetition } from "../../main.ts";
 import { expect, test } from "bun:test";
 import process from "node:process";
 import * as React from "react";
 import * as ReactDOMServer from "react-dom/server";
 
-const plugin = jsxStaticServePlugin({
+const plugin = jsxToPetition({
   ReactDOMServer,
   React,
   root: process.cwd(),

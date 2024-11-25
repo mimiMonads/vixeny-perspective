@@ -2,8 +2,8 @@ import { petitions, plugins, vixeny } from "vixeny";
 
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import {
-  jsxStaticServePlugin,
   jsxStaticServerPlugin,
+  jsxToPetition,
 } from "../../src/jsx/staticServe.ts";
 
 import * as React from "https://esm.sh/react";
@@ -12,9 +12,7 @@ import * as ReactDOMServer from "react-dom/server";
 // Simulating process.cwd() for Deno
 const root = Deno.cwd();
 
-console.log(root);
-
-const plugin = jsxStaticServePlugin({
+const plugin = jsxToPetition({
   ReactDOMServer,
   React,
   root,
